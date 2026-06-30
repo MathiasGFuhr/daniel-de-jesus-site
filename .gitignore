@@ -48,3 +48,6 @@ next-env.d.ts
 
 # uploads (gerados pelo dashboard)
 /public/uploads
+
+.vercel
+.env*

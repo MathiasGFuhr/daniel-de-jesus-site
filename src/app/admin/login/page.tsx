@@ -8,67 +8,86 @@ import type { ActionState } from "@/lib/actions/helpers";
 function LoginForm() {
   const params = useSearchParams();
   const next = params.get("next") ?? "/admin";
-  const [state, formAction] = useActionState<ActionState, FormData>(loginAction, null);
+  const [state, formAction, isPending] = useActionState<ActionState, FormData>(
+    loginAction,
+    null,
+  );
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-900 px-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <span className="text-xs uppercase tracking-[0.25em] text-slate-400">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-cream px-4 py-12">
+      {/* Detalhes decorativos sutis */}
+      <div className="pointer-events-none absolute -left-32 -top-32 h-80 w-80 rounded-full bg-gold/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -right-24 h-80 w-80 rounded-full bg-beige/40 blur-3xl" />
+
+      <div className="relative w-full max-w-md">
+        <div className="mb-10 text-center">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-gold">
             Painel administrativo
           </span>
-          <h1 className="mt-2 font-semibold text-2xl text-white">Daniel de Jesus</h1>
+          <h1 className="mt-3 font-display text-4xl tracking-tight text-ink sm:text-5xl">
+            Daniel <span className="text-gold">de Jesus</span>
+          </h1>
+          <div className="mx-auto mt-5 h-px w-12 bg-line" />
         </div>
 
         <form
           action={formAction}
-          className="space-y-4 rounded-2xl border border-slate-700 bg-slate-800 p-6 shadow-xl"
+          className="space-y-5 rounded-3xl border border-line bg-cream-50/80 p-8 shadow-[0_24px_60px_-30px_rgba(60,45,30,0.35)] backdrop-blur sm:p-10"
         >
           <input type="hidden" name="next" value={next} />
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-300">
+            <label
+              htmlFor="email"
+              className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.16em] text-warm-gray"
+            >
               E-mail
             </label>
             <input
+              id="email"
               name="email"
               type="email"
               required
               autoComplete="email"
-              placeholder="admin@exemplo.com"
-              className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3.5 py-2.5 text-sm text-white outline-none focus:border-slate-400"
+              placeholder="voce@exemplo.com"
+              className="w-full rounded-xl border border-line bg-cream px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-warm-gray-light focus:border-gold focus:ring-4 focus:ring-gold/10"
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-300">
+            <label
+              htmlFor="password"
+              className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.16em] text-warm-gray"
+            >
               Senha
             </label>
             <input
+              id="password"
               name="password"
               type="password"
               required
               autoComplete="current-password"
               placeholder="••••••••"
-              className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3.5 py-2.5 text-sm text-white outline-none focus:border-slate-400"
+              className="w-full rounded-xl border border-line bg-cream px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-warm-gray-light focus:border-gold focus:ring-4 focus:ring-gold/10"
             />
           </div>
 
           {state && !state.ok && (
-            <p className="rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-300">
+            <p className="rounded-xl border border-rose-300/60 bg-rose-50 px-4 py-2.5 text-sm text-rose-700">
               {state.message}
             </p>
           )}
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-100"
+            disabled={isPending}
+            className="group flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[12px] font-semibold uppercase tracking-[0.16em] text-cream transition-colors hover:bg-gold disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Entrar
+            {isPending ? "Entrando…" : "Entrar"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-slate-500">
+        <p className="mt-8 text-center text-xs tracking-wide text-warm-gray-light">
           Acesso restrito ao proprietário do site.
         </p>
       </div>
