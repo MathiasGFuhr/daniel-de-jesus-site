@@ -18,7 +18,7 @@ function revalidate() {
   revalidatePath("/admin/videos");
 }
 
-export function toEmbed(url: string): string {
+function toEmbed(url: string): string {
   if (!url) return "";
   // Converte watch?v=ID, youtu.be/ID, shorts/ID ou /embed/ID em /embed/ID.
   const m = url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{6,})/);

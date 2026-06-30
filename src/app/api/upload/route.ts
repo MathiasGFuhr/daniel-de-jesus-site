@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { put } from "@vercel/blob";
 import { randomUUID } from "crypto";
 import { getSession } from "@/lib/auth";
 
@@ -22,6 +21,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Não autorizado." }, { status: 401 });
   }
 
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return NextResponse.json(
+      { ok: false, error: "Armazenamento de imagens não configurado (BLOB_READ_WRITE_TOKEN)." },
+      { status: 500 },
+    );
+  }
+
   try {
     const formData = await request.formData();
     const file = formData.get("file");
@@ -39,15 +45,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Arquivo acima de 5MB." }, { status: 400 });
     }
 
-    const bytes = Buffer.from(await file.arrayBuffer());
-    const dir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(dir, { recursive: true });
-
     const ext = EXT[file.type] ?? "bin";
     const filename = `${Date.now()}-${randomUUID().slice(0, 8)}.${ext}`;
-    await writeFile(path.join(dir, filename), bytes);
 
-    return NextResponse.json({ ok: true, url: `/uploads/${filename}` });
+    const blob = await put(`uploads/${filename}`, file, {
+      access: "public",
+      contentType: file.type,
+    });
+
+    return NextResponse.json({ ok: true, url: blob.url });
   } catch {
     return NextResponse.json({ ok: false, error: "Erro ao salvar imagem." }, { status: 500 });
   }

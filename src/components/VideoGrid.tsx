@@ -75,7 +75,7 @@ export function VideoGrid({ videos }: { videos: VideoData[] }) {
             </button>
             <div className="aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-ink">
               <iframe
-                src={toEmbedSrc(active.youtubeEmbedUrl || active.youtubeUrl)}
+                src={toEmbedSrc(active.youtubeEmbedUrl || active.youtubeUrl || "")}
                 title={active.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

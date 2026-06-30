@@ -1,8 +1,8 @@
-// Prisma schema — Plataforma de cantor virtual (Daniel de Jesus)
-// SQLite local; troque o provider/datasource para Postgres em produção.
+// Prisma schema — Plataforma do cantor Daniel de Jesus
+// Postgres (Supabase) em produção e desenvolvimento.
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 generator client {
