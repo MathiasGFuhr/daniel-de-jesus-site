@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@theme {
+  /* Paleta premium / editorial — controlada pelo painel via --site-* */
+  --color-cream: var(--site-bg, #faf7f1);
+  --color-cream-50: var(--site-card, #fdfbf7);
+  --color-cream-100: #f6f1e8;
+  --color-beige: #ece3d4;
+  --color-beige-200: #e3d8c5;
+  --color-sand: #d8c9b0;
+  --color-ink: var(--site-text, #1b1813);
+  --color-ink-soft: #2a251e;
+  --color-coal: var(--site-sidebar, #14110d);
+  --color-warm-gray: var(--site-muted, #6f665a);
+  --color-warm-gray-light: #9a9082;
+  --color-gold: var(--site-accent, #b08a52);
+  --color-gold-soft: #c4a373;
+  --color-line: #e6ddcf;
+
+  --font-display: var(--font-playfair);
+  --font-sans: var(--font-inter);
+
+  --radius-card: 16px;
+}
+
+:root {
+  --background: var(--color-cream);
+  --foreground: var(--color-ink);
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--site-body-font, var(--font-sans)), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--site-title-font, var(--font-display)), Georgia, serif;
+}
+
+/* Scrollbar discreta */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-sand);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-soft);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s ease both;
+}
+
+/* Transição suave ao trocar de página */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition {
+  animation: page-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition,
+  .animate-fade-up {
+    animation: none;
+  }
+}

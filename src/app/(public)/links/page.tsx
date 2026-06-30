@@ -1,0 +1,75 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import { getLinkPage, getLinkButtons } from "@/lib/data";
+import { ArrowUpRightIcon, DynamicIcon } from "@/components/Icons";
+
+export const metadata: Metadata = {
+  title: "Links",
+  description: "Central de links oficiais.",
+};
+
+function splitName(name: string): [string, string] {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return [parts[0], ""];
+  return [parts[0], parts.slice(1).join(" ")];
+}
+
+export default async function LinksPage() {
+  const [page, buttons] = await Promise.all([
+    getLinkPage(),
+    getLinkButtons(true),
+  ]);
+  const [first, rest] = splitName(page.title);
+
+  return (
+    <div className="mx-auto w-full max-w-md px-5 py-12">
+      <div className="flex flex-col items-center text-center">
+        <div className="relative h-28 w-28 overflow-hidden rounded-full border-2 border-gold/40 bg-beige shadow-lg">
+          {page.avatarUrl && (
+            <Image
+              src={page.avatarUrl}
+              alt={page.title}
+              fill
+              sizes="112px"
+              className="object-cover"
+            />
+          )}
+        </div>
+        <h1 className="mt-5 font-display text-3xl uppercase tracking-[0.12em] text-ink">
+          {first} <span className="text-gold">{rest}</span>
+        </h1>
+        <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-warm-gray">
+          {page.subtitle}
+        </p>
+      </div>
+
+      <div className="mt-9 space-y-3">
+        {buttons.map((btn) => {
+          const internal = btn.url.startsWith("/");
+          return (
+            <a
+              key={btn.id}
+              href={btn.url}
+              target={internal ? undefined : "_blank"}
+              rel={internal ? undefined : "noopener noreferrer"}
+              className={`group flex items-center gap-4 rounded-2xl border px-5 py-4 transition-all hover:-translate-y-0.5 hover:shadow-md ${
+                btn.isPrimary
+                  ? "border-gold/50 bg-gold/10"
+                  : "border-line bg-cream-50 hover:border-gold/50"
+              }`}
+            >
+              <DynamicIcon name={btn.icon} className="h-5 w-5 text-ink" />
+              <span className="flex-1 text-left">
+                <span className="block text-sm font-semibold text-ink">{btn.label}</span>
+                {btn.subtitle && (
+                  <span className="block text-xs text-warm-gray">{btn.subtitle}</span>
+                )}
+              </span>
+              <ArrowUpRightIcon className="h-4 w-4 text-warm-gray-light transition-colors group-hover:text-gold" />
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

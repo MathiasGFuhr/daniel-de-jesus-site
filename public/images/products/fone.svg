@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" fill="none">
+  <rect width="600" height="600" fill="#f6f1e8"/>
+  <g stroke="#1b1813" stroke-width="14" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M170 320v-30a130 130 0 0 1 260 0v30"/>
+    <rect x="150" y="310" width="60" height="120" rx="22" fill="#2a251e"/>
+    <rect x="390" y="310" width="60" height="120" rx="22" fill="#2a251e"/>
+  </g>
+  <text x="300" y="520" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" letter-spacing="3" fill="#6f665a">Studio Pro</text>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d8c9b0"/>
+      <stop offset="1" stop-color="#b08a52"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#g)"/>
+  <path d="M210 250c30 50 150 50 180 0" fill="none" stroke="#1b1813" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+  <text x="300" y="430" text-anchor="middle" font-family="Georgia, serif" font-size="40" fill="#1b1813" font-style="italic">Quando Voc� Sorri</text>
+  <text x="300" y="476" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" letter-spacing="6" fill="#2a251e">DANIEL DE JESUS</text>
+</svg>

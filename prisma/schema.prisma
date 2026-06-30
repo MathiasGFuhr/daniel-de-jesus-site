@@ -1,0 +1,235 @@
+// Prisma schema — Plataforma de cantor virtual (Daniel de Jesus)
+// SQLite local; troque o provider/datasource para Postgres em produção.
+
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("owner")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SiteSettings {
+  id               String   @id @default("singleton")
+  siteName         String
+  artistName       String
+  artistLabel      String
+  description      String
+  footerText       String
+  aiDisclosureText String
+  copyrightText    String
+  logoUrl          String
+  faviconUrl       String
+  isPublished      Boolean  @default(true)
+  maintenanceMode  Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model ThemeSettings {
+  id              String   @id @default("singleton")
+  primaryColor    String
+  secondaryColor  String
+  accentColor     String
+  backgroundColor String
+  cardColor       String
+  textColor       String
+  mutedTextColor  String
+  buttonColor     String
+  sidebarColor    String
+  headerColor     String
+  titleFont       String
+  bodyFont        String
+  cardRadius      String
+  buttonStyle     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model HomeContent {
+  id                  String   @id @default("singleton")
+  eyebrow             String
+  title               String
+  slogan              String
+  description         String
+  imageUrl            String
+  primaryButtonLabel  String
+  primaryButtonUrl    String
+  secondaryButtonLabel String
+  secondaryButtonUrl  String
+  thirdButtonLabel    String
+  thirdButtonUrl      String
+  // seções (toggles)
+  showHero           Boolean @default(true)
+  showFeaturedVideo  Boolean @default(true)
+  showSpotify        Boolean @default(true)
+  showOfficialLinks  Boolean @default(true)
+  showProducts       Boolean @default(true)
+  showAbout          Boolean @default(true)
+  showContact        Boolean @default(true)
+  // bio (página sobre)
+  bioShort           String  @default("")
+  bioFull            String  @default("")
+  aboutImageUrl      String  @default("")
+  aboutGenre         String  @default("")
+  aboutYear          String  @default("")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  label     String
+  handle    String
+  url       String
+  icon      String
+  isActive  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+model Song {
+  id            String   @id @default(cuid())
+  title         String
+  type          String
+  year          String
+  releaseDate   String?
+  coverUrl      String
+  description   String
+  spotifyUrl    String?
+  youtubeUrl    String?
+  deezerUrl     String?
+  appleMusicUrl String?
+  isActive      Boolean  @default(true)
+  isFeatured    Boolean  @default(false)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([order])
+}
+
+model Video {
+  id              String   @id @default(cuid())
+  title           String
+  type            String
+  description     String
+  youtubeUrl      String
+  youtubeEmbedUrl String
+  thumbnailUrl    String
+  publishedAt     String?
+  isActive        Boolean  @default(true)
+  isFeatured      Boolean  @default(false)
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([order])
+}
+
+model SpotifySettings {
+  id          String   @id @default("singleton")
+  title       String
+  artist      String
+  description String
+  embedUrl    String
+  externalUrl String
+  type        String   @default("EP")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  price       String
+  imageUrl    String
+  url         String
+  type        String
+  tag         String?
+  description String
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+}
+
+model LinkPage {
+  id          String   @id @default("singleton")
+  avatarUrl   String
+  title       String
+  subtitle    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model LinkPageButton {
+  id        String   @id @default(cuid())
+  label     String
+  subtitle  String?
+  url       String
+  icon      String
+  isActive  Boolean  @default(true)
+  isPrimary Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+model ContactSettings {
+  id                  String   @id @default("singleton")
+  email               String
+  headline            String
+  description         String
+  address             String?
+  instagram           String?
+  affiliateDisclaimer String   @default("")
+  contactTypes        String   @default("")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model ContactMessage {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  contactType String
+  message     String
+  status      String   @default("novo")
+  createdAt   DateTime @default(now())
+
+  @@index([status])
+}
+
+model AdvancedSettings {
+  id               String   @id @default("singleton")
+  ownerName        String
+  ownerEmail       String
+  googleAnalyticsId String  @default("")
+  metaPixelId      String   @default("")
+  tiktokPixelId    String   @default("")
+  customHeadCode   String   @default("")
+  customFooterCode String   @default("")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
