@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRightIcon, DynamicIcon } from "./Icons";
-import { PUBLIC_NAV, type ShellData } from "@/lib/public-nav";
+import { PUBLIC_NAV, navHref, type ShellData } from "@/lib/public-nav";
 
 function splitName(name: string): [string, string] {
   const parts = name.trim().split(/\s+/);
@@ -46,7 +46,7 @@ export function Footer({ data }: { data: ShellData }) {
           {/* Marca */}
           <div>
             <Link
-              href="/"
+              href={data.basePath}
               className="font-display text-3xl uppercase tracking-[0.16em] text-ink"
             >
               {first} <span className="text-gold">{rest}</span>
@@ -81,7 +81,7 @@ export function Footer({ data }: { data: ShellData }) {
                   {col.map((item) => (
                     <li key={item.href}>
                       <Link
-                        href={item.href}
+                        href={navHref(data.basePath, item.href)}
                         className="inline-block transition-colors hover:text-ink"
                       >
                         {item.label}
@@ -105,7 +105,7 @@ export function Footer({ data }: { data: ShellData }) {
               {data.footer.email}
             </a>
             <Link
-              href="/contato"
+              href={navHref(data.basePath, "/contato")}
               className="mt-5 inline-flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
             >
               Fale comigo

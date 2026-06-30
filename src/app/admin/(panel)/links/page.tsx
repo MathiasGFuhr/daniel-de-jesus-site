@@ -5,11 +5,13 @@ import { ImageUpload } from "@/components/admin/ImageUpload";
 import { LinkButtonManager } from "@/components/admin/LinkButtonManager";
 import { updateLinkPage } from "@/lib/actions/links";
 import { getLinkPage, getLinkButtons } from "@/lib/data";
+import { getCurrentSite } from "@/lib/tenant";
 
 export default async function LinksAdminPage() {
+  const site = await getCurrentSite();
   const [page, buttons] = await Promise.all([
-    getLinkPage(),
-    getLinkButtons(),
+    getLinkPage(site.id),
+    getLinkButtons(site.id),
   ]);
 
   return (
@@ -20,7 +22,7 @@ export default async function LinksAdminPage() {
       />
 
       <div className="space-y-8">
-        <AdminForm action={updateLinkPage} previewHref="/links" submitLabel="Salvar cabeçalho">
+        <AdminForm action={updateLinkPage} previewHref={`/${site.slug}/links`} submitLabel="Salvar cabeçalho">
           <AdminSection title="Cabeçalho da página de links">
             <div className="grid gap-4 sm:grid-cols-2">
               <TextInput label="Nome exibido" name="title" defaultValue={page.title} />

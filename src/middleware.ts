@@ -21,17 +21,19 @@ export async function middleware(request: NextRequest) {
   const authed = await isValid(token);
 
   const isLogin = pathname === "/admin/login";
+  const isRegister = pathname === "/admin/register";
+  const isPublicAuth = isLogin || isRegister;
 
   // Usuário não autenticado tentando acessar o painel.
-  if (pathname.startsWith("/admin") && !isLogin && !authed) {
+  if (pathname.startsWith("/admin") && !isPublicAuth && !authed) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
     url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
   }
 
-  // Já autenticado tentando ver o login.
-  if (isLogin && authed) {
+  // Já autenticado tentando ver login/cadastro.
+  if (isPublicAuth && authed) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin";
     url.search = "";

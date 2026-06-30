@@ -1,9 +1,11 @@
 import { PageHeading } from "@/components/admin/AdminSection";
 import { VideoManager } from "@/components/admin/VideoManager";
 import { getVideos } from "@/lib/data";
+import { getCurrentSite } from "@/lib/tenant";
 
 export default async function VideosAdminPage() {
-  const items = await getVideos();
+  const site = await getCurrentSite();
+  const items = await getVideos(site.id);
   return (
     <>
       <PageHeading

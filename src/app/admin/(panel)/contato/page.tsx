@@ -5,11 +5,13 @@ import { TextArea } from "@/components/admin/TextArea";
 import { DeleteButton } from "@/components/admin/DeleteButton";
 import { updateContact, deleteContactMessage } from "@/lib/actions/contact";
 import { getContactSettings, getContactMessages, parseContactTypes } from "@/lib/data";
+import { getCurrentSite } from "@/lib/tenant";
 
 export default async function AdminContatoPage() {
+  const site = await getCurrentSite();
   const [c, messages] = await Promise.all([
-    getContactSettings(),
-    getContactMessages(),
+    getContactSettings(site.id),
+    getContactMessages(site.id),
   ]);
   const types = parseContactTypes(c.contactTypes).join("\n");
 
@@ -20,7 +22,7 @@ export default async function AdminContatoPage() {
         description="Informações de contato e mensagens recebidas pelo formulário."
       />
 
-      <AdminForm action={updateContact} previewHref="/contato">
+      <AdminForm action={updateContact} previewHref={`/${site.slug}/contato`}>
         <AdminSection title="Informações de contato">
           <div className="grid gap-4 sm:grid-cols-2">
             <TextInput label="E-mail comercial" name="email" type="email" required defaultValue={c.email} />

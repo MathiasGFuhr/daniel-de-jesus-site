@@ -1,3 +1,6 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -12,8 +15,20 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
+CREATE TABLE "Site" (
+    "id" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
+    "ownerId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Site_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "SiteSettings" (
-    "id" TEXT NOT NULL DEFAULT 'singleton',
+    "id" TEXT NOT NULL,
+    "siteId" TEXT NOT NULL,
     "siteName" TEXT NOT NULL,
     "artistName" TEXT NOT NULL,
     "artistLabel" TEXT NOT NULL,
@@ -33,7 +48,8 @@ CREATE TABLE "SiteSettings" (
 
 -- CreateTable
 CREATE TABLE "ThemeSettings" (
-    "id" TEXT NOT NULL DEFAULT 'singleton',
+    "id" TEXT NOT NULL,
+    "siteId" TEXT NOT NULL,
     "primaryColor" TEXT NOT NULL,
     "secondaryColor" TEXT NOT NULL,
     "accentColor" TEXT NOT NULL,
@@ -56,7 +72,8 @@ CREATE TABLE "ThemeSettings" (
 
 -- CreateTable
 CREATE TABLE "HomeContent" (
-    "id" TEXT NOT NULL DEFAULT 'singleton',
+    "id" TEXT NOT NULL,
+    "siteId" TEXT NOT NULL,
     "eyebrow" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "slogan" TEXT NOT NULL,
@@ -89,6 +106,7 @@ CREATE TABLE "HomeContent" (
 -- CreateTable
 CREATE TABLE "SocialLink" (
     "id" TEXT NOT NULL,
+    "siteId" TEXT NOT NULL,
     "label" TEXT NOT NULL,
     "handle" TEXT NOT NULL,
     "url" TEXT NOT NULL,
@@ -104,6 +122,7 @@ CREATE TABLE "SocialLink" (
 -- CreateTable
 CREATE TABLE "Song" (
     "id" TEXT NOT NULL,
+    "siteId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "year" TEXT NOT NULL,
@@ -126,6 +145,7 @@ CREATE TABLE "Song" (
 -- CreateTable
 CREATE TABLE "Video" (
     "id" TEXT NOT NULL,
+    "siteId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -144,7 +164,8 @@ CREATE TABLE "Video" (
 
 -- CreateTable
 CREATE TABLE "SpotifySettings" (
-    "id" TEXT NOT NULL DEFAULT 'singleton',
+    "id" TEXT NOT NULL,
+    "siteId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "artist" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -161,6 +182,7 @@ CREATE TABLE "SpotifySettings" (
 -- CreateTable
 CREATE TABLE "Product" (
     "id" TEXT NOT NULL,
+    "siteId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "category" TEXT NOT NULL,
     "price" TEXT NOT NULL,
@@ -179,7 +201,8 @@ CREATE TABLE "Product" (
 
 -- CreateTable
 CREATE TABLE "LinkPage" (
-    "id" TEXT NOT NULL DEFAULT 'singleton',
+    "id" TEXT NOT NULL,
+    "siteId" TEXT NOT NULL,
     "avatarUrl" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "subtitle" TEXT NOT NULL,
@@ -192,6 +215,7 @@ CREATE TABLE "LinkPage" (
 -- CreateTable
 CREATE TABLE "LinkPageButton" (
     "id" TEXT NOT NULL,
+    "siteId" TEXT NOT NULL,
     "label" TEXT NOT NULL,
     "subtitle" TEXT,
     "url" TEXT NOT NULL,
@@ -207,7 +231,8 @@ CREATE TABLE "LinkPageButton" (
 
 -- CreateTable
 CREATE TABLE "ContactSettings" (
-    "id" TEXT NOT NULL DEFAULT 'singleton',
+    "id" TEXT NOT NULL,
+    "siteId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "headline" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -224,6 +249,7 @@ CREATE TABLE "ContactSettings" (
 -- CreateTable
 CREATE TABLE "ContactMessage" (
     "id" TEXT NOT NULL,
+    "siteId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "contactType" TEXT NOT NULL,
@@ -236,7 +262,8 @@ CREATE TABLE "ContactMessage" (
 
 -- CreateTable
 CREATE TABLE "AdvancedSettings" (
-    "id" TEXT NOT NULL DEFAULT 'singleton',
+    "id" TEXT NOT NULL,
+    "siteId" TEXT NOT NULL,
     "ownerName" TEXT NOT NULL,
     "ownerEmail" TEXT NOT NULL,
     "googleAnalyticsId" TEXT NOT NULL DEFAULT '',
@@ -254,19 +281,91 @@ CREATE TABLE "AdvancedSettings" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE INDEX "SocialLink_order_idx" ON "SocialLink"("order");
+CREATE UNIQUE INDEX "Site_slug_key" ON "Site"("slug");
 
 -- CreateIndex
-CREATE INDEX "Song_order_idx" ON "Song"("order");
+CREATE UNIQUE INDEX "Site_ownerId_key" ON "Site"("ownerId");
 
 -- CreateIndex
-CREATE INDEX "Video_order_idx" ON "Video"("order");
+CREATE INDEX "Site_slug_idx" ON "Site"("slug");
 
 -- CreateIndex
-CREATE INDEX "Product_order_idx" ON "Product"("order");
+CREATE UNIQUE INDEX "SiteSettings_siteId_key" ON "SiteSettings"("siteId");
 
 -- CreateIndex
-CREATE INDEX "LinkPageButton_order_idx" ON "LinkPageButton"("order");
+CREATE UNIQUE INDEX "ThemeSettings_siteId_key" ON "ThemeSettings"("siteId");
 
 -- CreateIndex
-CREATE INDEX "ContactMessage_status_idx" ON "ContactMessage"("status");
+CREATE UNIQUE INDEX "HomeContent_siteId_key" ON "HomeContent"("siteId");
+
+-- CreateIndex
+CREATE INDEX "SocialLink_siteId_order_idx" ON "SocialLink"("siteId", "order");
+
+-- CreateIndex
+CREATE INDEX "Song_siteId_order_idx" ON "Song"("siteId", "order");
+
+-- CreateIndex
+CREATE INDEX "Video_siteId_order_idx" ON "Video"("siteId", "order");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "SpotifySettings_siteId_key" ON "SpotifySettings"("siteId");
+
+-- CreateIndex
+CREATE INDEX "Product_siteId_order_idx" ON "Product"("siteId", "order");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "LinkPage_siteId_key" ON "LinkPage"("siteId");
+
+-- CreateIndex
+CREATE INDEX "LinkPageButton_siteId_order_idx" ON "LinkPageButton"("siteId", "order");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ContactSettings_siteId_key" ON "ContactSettings"("siteId");
+
+-- CreateIndex
+CREATE INDEX "ContactMessage_siteId_status_idx" ON "ContactMessage"("siteId", "status");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AdvancedSettings_siteId_key" ON "AdvancedSettings"("siteId");
+
+-- AddForeignKey
+ALTER TABLE "Site" ADD CONSTRAINT "Site_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SiteSettings" ADD CONSTRAINT "SiteSettings_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ThemeSettings" ADD CONSTRAINT "ThemeSettings_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "HomeContent" ADD CONSTRAINT "HomeContent_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SocialLink" ADD CONSTRAINT "SocialLink_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Song" ADD CONSTRAINT "Song_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Video" ADD CONSTRAINT "Video_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SpotifySettings" ADD CONSTRAINT "SpotifySettings_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Product" ADD CONSTRAINT "Product_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LinkPage" ADD CONSTRAINT "LinkPage_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LinkPageButton" ADD CONSTRAINT "LinkPageButton_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ContactSettings" ADD CONSTRAINT "ContactSettings_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ContactMessage" ADD CONSTRAINT "ContactMessage_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AdvancedSettings" ADD CONSTRAINT "AdvancedSettings_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;

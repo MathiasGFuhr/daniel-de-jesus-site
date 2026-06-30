@@ -2,7 +2,6 @@
 // Refletem o conteúdo atual do site (Daniel de Jesus).
 
 export const defaultSiteSettings = {
-  id: "singleton",
   siteName: "Daniel de Jesus — Site oficial",
   artistName: "Daniel de Jesus",
   artistLabel: "Cantor e compositor",
@@ -19,7 +18,6 @@ export const defaultSiteSettings = {
 };
 
 export const defaultTheme = {
-  id: "singleton",
   primaryColor: "#b08a52",
   secondaryColor: "#1b1813",
   accentColor: "#c4a373",
@@ -37,7 +35,6 @@ export const defaultTheme = {
 };
 
 export const defaultHome = {
-  id: "singleton",
   eyebrow: "Cantor e compositor",
   title: "Daniel de Jesus",
   slogan: "Música que toca a alma.",
@@ -67,7 +64,6 @@ export const defaultHome = {
 };
 
 export const defaultSpotify = {
-  id: "singleton",
   title: "Entre Estrelas",
   artist: "Daniel de Jesus",
   description: "EP • 2025 • 5 faixas • 17min",
@@ -78,7 +74,6 @@ export const defaultSpotify = {
 };
 
 export const defaultContact = {
-  id: "singleton",
   email: "comercial@danieldejesus.art",
   headline: "Entre em contato com a equipe Daniel de Jesus",
   description:
@@ -98,14 +93,12 @@ export const defaultContact = {
 };
 
 export const defaultLinkPage = {
-  id: "singleton",
   avatarUrl: "/images/daniel-hero.svg",
   title: "Daniel de Jesus",
   subtitle: "Cantor e compositor",
 };
 
 export const defaultAdvanced = {
-  id: "singleton",
   ownerName: "Proprietário",
   ownerEmail: process.env.ADMIN_EMAIL ?? "admin@danieldejesus.art",
   googleAnalyticsId: "",

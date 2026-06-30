@@ -8,7 +8,7 @@ type Status = "idle" | "loading" | "success" | "error";
 const inputClass =
   "w-full rounded-xl border border-line bg-cream-50 px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-warm-gray-light focus:border-gold focus:ring-2 focus:ring-gold/20";
 
-export function ContactForm({ types }: { types: string[] }) {
+export function ContactForm({ types, siteSlug }: { types: string[]; siteSlug: string }) {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
@@ -18,7 +18,7 @@ export function ContactForm({ types }: { types: string[] }) {
     setError("");
 
     const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
+    const data = { ...Object.fromEntries(new FormData(form).entries()), siteSlug };
 
     try {
       const res = await fetch("/api/contato", {

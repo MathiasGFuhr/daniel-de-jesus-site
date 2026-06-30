@@ -11,103 +11,112 @@ import {
   defaultAdvanced,
 } from "./defaults";
 
-// --- Singletons: leem ou criam com defaults ---
+// --- Resolução de tenant ---
 
-export const getSiteSettings = cache(async () => {
+export const getSiteBySlug = cache(async (slug: string) => {
+  return prisma.site.findUnique({ where: { slug } });
+});
+
+// --- Singletons por site: leem ou criam com defaults ---
+
+export const getSiteSettings = cache(async (siteId: string) => {
   return prisma.siteSettings.upsert({
-    where: { id: "singleton" },
+    where: { siteId },
     update: {},
-    create: defaultSiteSettings,
+    create: { ...defaultSiteSettings, siteId },
   });
 });
 
-export const getThemeSettings = cache(async () => {
+export const getThemeSettings = cache(async (siteId: string) => {
   return prisma.themeSettings.upsert({
-    where: { id: "singleton" },
+    where: { siteId },
     update: {},
-    create: defaultTheme,
+    create: { ...defaultTheme, siteId },
   });
 });
 
-export const getHomeContent = cache(async () => {
+export const getHomeContent = cache(async (siteId: string) => {
   return prisma.homeContent.upsert({
-    where: { id: "singleton" },
+    where: { siteId },
     update: {},
-    create: defaultHome,
+    create: { ...defaultHome, siteId },
   });
 });
 
-export const getSpotifySettings = cache(async () => {
+export const getSpotifySettings = cache(async (siteId: string) => {
   return prisma.spotifySettings.upsert({
-    where: { id: "singleton" },
+    where: { siteId },
     update: {},
-    create: defaultSpotify,
+    create: { ...defaultSpotify, siteId },
   });
 });
 
-export const getContactSettings = cache(async () => {
+export const getContactSettings = cache(async (siteId: string) => {
   return prisma.contactSettings.upsert({
-    where: { id: "singleton" },
+    where: { siteId },
     update: {},
-    create: defaultContact,
+    create: { ...defaultContact, siteId },
   });
 });
 
-export const getLinkPage = cache(async () => {
+export const getLinkPage = cache(async (siteId: string) => {
   return prisma.linkPage.upsert({
-    where: { id: "singleton" },
+    where: { siteId },
     update: {},
-    create: defaultLinkPage,
+    create: { ...defaultLinkPage, siteId },
   });
 });
 
-export const getAdvancedSettings = cache(async () => {
+export const getAdvancedSettings = cache(async (siteId: string) => {
   return prisma.advancedSettings.upsert({
-    where: { id: "singleton" },
+    where: { siteId },
     update: {},
-    create: defaultAdvanced,
+    create: { ...defaultAdvanced, siteId },
   });
 });
 
-// --- Listas ---
+// --- Listas por site ---
 
-export const getSocialLinks = cache(async (activeOnly = false) => {
+export const getSocialLinks = cache(async (siteId: string, activeOnly = false) => {
   return prisma.socialLink.findMany({
-    where: activeOnly ? { isActive: true } : undefined,
+    where: { siteId, ...(activeOnly ? { isActive: true } : {}) },
     orderBy: { order: "asc" },
   });
 });
 
-export const getSongs = cache(async (activeOnly = false) => {
+export const getSongs = cache(async (siteId: string, activeOnly = false) => {
   return prisma.song.findMany({
-    where: activeOnly ? { isActive: true } : undefined,
+    where: { siteId, ...(activeOnly ? { isActive: true } : {}) },
     orderBy: { order: "asc" },
   });
 });
 
-export const getVideos = cache(async (activeOnly = false) => {
+export const getVideos = cache(async (siteId: string, activeOnly = false) => {
   return prisma.video.findMany({
-    where: activeOnly ? { isActive: true } : undefined,
+    where: { siteId, ...(activeOnly ? { isActive: true } : {}) },
     orderBy: { order: "asc" },
   });
 });
 
-export const getProducts = cache(async (activeOnly = false) => {
+export const getProducts = cache(async (siteId: string, activeOnly = false) => {
   return prisma.product.findMany({
-    where: activeOnly ? { isActive: true } : undefined,
+    where: { siteId, ...(activeOnly ? { isActive: true } : {}) },
     orderBy: { order: "asc" },
   });
 });
 
-export const getLinkButtons = cache(async (activeOnly = false) => {
+export const getLinkButtons = cache(async (siteId: string, activeOnly = false) => {
   return prisma.linkPageButton.findMany({
-    where: activeOnly ? { isActive: true } : undefined,
+    where: { siteId, ...(activeOnly ? { isActive: true } : {}) },
     orderBy: { order: "asc" },
   });
 });
 
-export const getContactMessages = cache(async () => {
-  return prisma.contactMessage.findMany({ orderBy: { createdAt: "desc" } });
+export const getContactMessages = cache(async (siteId: string) => {
+  return prisma.contactMessage.findMany({
+    where: { siteId },
+    orderBy: { createdAt: "desc" },
+  });
 });
 
 export function parseContactTypes(raw: string): string[] {

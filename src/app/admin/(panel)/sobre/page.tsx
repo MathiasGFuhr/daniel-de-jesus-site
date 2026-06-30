@@ -5,9 +5,11 @@ import { TextArea } from "@/components/admin/TextArea";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { updateAbout } from "@/lib/actions/about";
 import { getHomeContent } from "@/lib/data";
+import { getCurrentSite } from "@/lib/tenant";
 
 export default async function AdminSobrePage() {
-  const h = await getHomeContent();
+  const site = await getCurrentSite();
+  const h = await getHomeContent(site.id);
 
   return (
     <>
@@ -16,7 +18,7 @@ export default async function AdminSobrePage() {
         description="Conteúdo da página pública Sobre: biografia, imagem e informações."
       />
 
-      <AdminForm action={updateAbout} previewHref="/sobre">
+      <AdminForm action={updateAbout} previewHref={`/${site.slug}/sobre`}>
         <AdminSection title="Biografia">
           <div className="space-y-4">
             <TextArea

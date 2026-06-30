@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NavGlyph, DynamicIcon } from "./Icons";
-import { PUBLIC_NAV, type ShellData } from "@/lib/public-nav";
+import { PUBLIC_NAV, navHref, type ShellData } from "@/lib/public-nav";
 
-function isActive(pathname: string, href: string) {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(`${href}/`);
+function isActive(pathname: string, full: string, isHome: boolean) {
+  if (isHome) return pathname === full;
+  return pathname === full || pathname.startsWith(`${full}/`);
 }
 
 function splitName(name: string): [string, string] {
@@ -26,7 +26,7 @@ export function Sidebar({ data }: { data: ShellData }) {
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col bg-coal text-cream-100 lg:flex">
       <div className="px-7 pt-8 pb-6">
-        <Link href="/" className="block leading-none">
+        <Link href={data.basePath} className="block leading-none">
           <span className="font-display text-xl uppercase tracking-[0.18em]">
             {first}
           </span>
@@ -41,11 +41,12 @@ export function Sidebar({ data }: { data: ShellData }) {
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-4">
         {PUBLIC_NAV.map((item) => {
-          const active = isActive(pathname, item.href);
+          const full = navHref(data.basePath, item.href);
+          const active = isActive(pathname, full, item.href === "");
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={full}
               className={`group relative flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm transition-colors ${
                 active
                   ? "bg-white/[0.06] text-cream"

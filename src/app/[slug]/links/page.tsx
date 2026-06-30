@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { getLinkPage, getLinkButtons } from "@/lib/data";
+import { notFound } from "next/navigation";
+import { getSiteBySlug, getLinkPage, getLinkButtons } from "@/lib/data";
+import { resolvePublicHref } from "@/lib/public-nav";
 import { ArrowUpRightIcon, DynamicIcon } from "@/components/Icons";
 
 export const metadata: Metadata = {
@@ -14,10 +16,19 @@ function splitName(name: string): [string, string] {
   return [parts[0], parts.slice(1).join(" ")];
 }
 
-export default async function LinksPage() {
+export default async function LinksPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const tenant = await getSiteBySlug(slug);
+  if (!tenant) notFound();
+  const basePath = `/${tenant.slug}`;
+
   const [page, buttons] = await Promise.all([
-    getLinkPage(),
-    getLinkButtons(true),
+    getLinkPage(tenant.id),
+    getLinkButtons(tenant.id, true),
   ]);
   const [first, rest] = splitName(page.title);
 
@@ -46,10 +57,11 @@ export default async function LinksPage() {
       <div className="mt-9 space-y-3">
         {buttons.map((btn) => {
           const internal = btn.url.startsWith("/");
+          const href = resolvePublicHref(basePath, btn.url);
           return (
             <a
               key={btn.id}
-              href={btn.url}
+              href={href}
               target={internal ? undefined : "_blank"}
               rel={internal ? undefined : "noopener noreferrer"}
               className={`group flex items-center gap-4 rounded-2xl border px-5 py-4 transition-all hover:-translate-y-0.5 hover:shadow-md ${

@@ -2,20 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import {
-  assertAuth,
-  bool,
-  fail,
-  isValidUrl,
-  num,
-  ok,
-  str,
-  type ActionState,
-} from "./helpers";
+import { getCurrentSite } from "@/lib/tenant";
+import { bool, fail, isValidUrl, num, ok, str, type ActionState } from "./helpers";
 
-function revalidate() {
-  revalidatePath("/", "layout");
-  revalidatePath("/links");
+function revalidate(slug: string) {
+  revalidatePath(`/${slug}`, "layout");
+  revalidatePath(`/${slug}/links`);
   revalidatePath("/admin/redes");
 }
 
@@ -23,7 +15,7 @@ export async function saveSocialLink(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await assertAuth();
+  const site = await getCurrentSite();
 
   const id = str(formData, "id");
   const label = str(formData, "label");
@@ -41,35 +33,35 @@ export async function saveSocialLink(
   };
 
   if (id) {
-    await prisma.socialLink.update({ where: { id }, data });
+    await prisma.socialLink.updateMany({ where: { id, siteId: site.id }, data });
   } else {
-    const count = await prisma.socialLink.count();
-    await prisma.socialLink.create({ data: { ...data, order: data.order || count + 1 } });
+    const count = await prisma.socialLink.count({ where: { siteId: site.id } });
+    await prisma.socialLink.create({ data: { ...data, siteId: site.id, order: data.order || count + 1 } });
   }
 
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }
 
 export async function deleteSocialLink(id: string): Promise<ActionState> {
-  await assertAuth();
-  await prisma.socialLink.delete({ where: { id } });
-  revalidate();
+  const site = await getCurrentSite();
+  await prisma.socialLink.deleteMany({ where: { id, siteId: site.id } });
+  revalidate(site.slug);
   return ok("Rede removida com sucesso.");
 }
 
 export async function toggleSocialLink(id: string): Promise<ActionState> {
-  await assertAuth();
-  const item = await prisma.socialLink.findUnique({ where: { id } });
+  const site = await getCurrentSite();
+  const item = await prisma.socialLink.findFirst({ where: { id, siteId: site.id } });
   if (!item) return fail("Item não encontrado.");
   await prisma.socialLink.update({ where: { id }, data: { isActive: !item.isActive } });
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }
 
 export async function moveSocialLink(id: string, dir: "up" | "down"): Promise<ActionState> {
-  await assertAuth();
-  const items = await prisma.socialLink.findMany({ orderBy: { order: "asc" } });
+  const site = await getCurrentSite();
+  const items = await prisma.socialLink.findMany({ where: { siteId: site.id }, orderBy: { order: "asc" } });
   const idx = items.findIndex((i) => i.id === id);
   const swap = dir === "up" ? idx - 1 : idx + 1;
   if (idx < 0 || swap < 0 || swap >= items.length) return ok();
@@ -77,6 +69,6 @@ export async function moveSocialLink(id: string, dir: "up" | "down"): Promise<Ac
     prisma.socialLink.update({ where: { id: items[idx].id }, data: { order: items[swap].order } }),
     prisma.socialLink.update({ where: { id: items[swap].id }, data: { order: items[idx].order } }),
   ]);
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }

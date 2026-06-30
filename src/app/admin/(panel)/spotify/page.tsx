@@ -7,10 +7,12 @@ import { ToggleSwitch } from "@/components/admin/ToggleSwitch";
 import { SpotifyPreview } from "@/components/admin/SpotifyPreview";
 import { updateSpotify } from "@/lib/actions/spotify";
 import { getSpotifySettings } from "@/lib/data";
+import { getCurrentSite } from "@/lib/tenant";
 import { SPOTIFY_TYPES } from "@/lib/defaults";
 
 export default async function AdminSpotifyPage() {
-  const s = await getSpotifySettings();
+  const site = await getCurrentSite();
+  const s = await getSpotifySettings(site.id);
 
   return (
     <>
@@ -19,7 +21,7 @@ export default async function AdminSpotifyPage() {
         description="Configure o player do Spotify exibido no site."
       />
 
-      <AdminForm action={updateSpotify} previewHref="/spotify">
+      <AdminForm action={updateSpotify} previewHref={`/${site.slug}/spotify`}>
         <AdminSection title="Informações">
           <div className="grid gap-4 sm:grid-cols-2">
             <TextInput label="Título exibido" name="title" defaultValue={s.title} />

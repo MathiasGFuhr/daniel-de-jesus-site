@@ -2,19 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import {
-  assertAuth,
-  bool,
-  fail,
-  isValidUrl,
-  ok,
-  str,
-  type ActionState,
-} from "./helpers";
+import { getCurrentSite } from "@/lib/tenant";
+import { bool, fail, isValidUrl, ok, str, type ActionState } from "./helpers";
 
-function revalidate() {
-  revalidatePath("/", "layout");
-  revalidatePath("/videos");
+function revalidate(slug: string) {
+  revalidatePath(`/${slug}`, "layout");
+  revalidatePath(`/${slug}/videos`);
   revalidatePath("/admin/videos");
 }
 
@@ -29,7 +22,7 @@ export async function saveVideo(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await assertAuth();
+  const site = await getCurrentSite();
 
   const id = str(formData, "id");
   const title = str(formData, "title");
@@ -37,7 +30,6 @@ export async function saveVideo(
   if (!title) return fail("O título é obrigatório.", { title: "Obrigatório" });
   if (!isValidUrl(youtubeUrl, false)) return fail("Insira uma URL do YouTube válida.", { youtubeUrl: "URL inválida" });
 
-  // Sempre normaliza para o formato /embed/ (mesmo que o usuário cole uma URL watch).
   const embed = toEmbed(str(formData, "youtubeEmbedUrl") || youtubeUrl);
   const isFeatured = bool(formData, "isFeatured");
 
@@ -54,40 +46,40 @@ export async function saveVideo(
   };
 
   if (isFeatured) {
-    await prisma.video.updateMany({ data: { isFeatured: false } });
+    await prisma.video.updateMany({ where: { siteId: site.id }, data: { isFeatured: false } });
   }
 
   if (id) {
-    await prisma.video.update({ where: { id }, data });
+    await prisma.video.updateMany({ where: { id, siteId: site.id }, data });
   } else {
-    const count = await prisma.video.count();
-    await prisma.video.create({ data: { ...data, order: count + 1 } });
+    const count = await prisma.video.count({ where: { siteId: site.id } });
+    await prisma.video.create({ data: { ...data, siteId: site.id, order: count + 1 } });
   }
 
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }
 
 export async function deleteVideo(id: string): Promise<ActionState> {
-  await assertAuth();
-  await prisma.video.delete({ where: { id } });
-  revalidate();
+  const site = await getCurrentSite();
+  await prisma.video.deleteMany({ where: { id, siteId: site.id } });
+  revalidate(site.slug);
   return ok("Vídeo removido com sucesso.");
 }
 
 export async function toggleVideo(id: string): Promise<ActionState> {
-  await assertAuth();
-  const item = await prisma.video.findUnique({ where: { id } });
+  const site = await getCurrentSite();
+  const item = await prisma.video.findFirst({ where: { id, siteId: site.id } });
   if (!item) return fail("Item não encontrado.");
   await prisma.video.update({ where: { id }, data: { isActive: !item.isActive } });
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }
 
 export async function featureVideo(id: string): Promise<ActionState> {
-  await assertAuth();
-  await prisma.video.updateMany({ data: { isFeatured: false } });
-  await prisma.video.update({ where: { id }, data: { isFeatured: true } });
-  revalidate();
+  const site = await getCurrentSite();
+  await prisma.video.updateMany({ where: { siteId: site.id }, data: { isFeatured: false } });
+  await prisma.video.updateMany({ where: { id, siteId: site.id }, data: { isFeatured: true } });
+  revalidate(site.slug);
   return ok("Vídeo em destaque definido.");
 }

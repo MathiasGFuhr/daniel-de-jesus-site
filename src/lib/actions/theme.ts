@@ -2,17 +2,18 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { assertAuth, ok, str, type ActionState } from "./helpers";
+import { getCurrentSite } from "@/lib/tenant";
+import { ok, str, type ActionState } from "./helpers";
 import { defaultTheme } from "@/lib/defaults";
 
 export async function updateTheme(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await assertAuth();
+  const site = await getCurrentSite();
 
   await prisma.themeSettings.update({
-    where: { id: "singleton" },
+    where: { siteId: site.id },
     data: {
       primaryColor: str(formData, "primaryColor"),
       secondaryColor: str(formData, "secondaryColor"),
@@ -31,17 +32,15 @@ export async function updateTheme(
     },
   });
 
-  revalidatePath("/", "layout");
+  revalidatePath(`/${site.slug}`, "layout");
   revalidatePath("/admin/aparencia");
   return ok("Cores atualizadas com sucesso.");
 }
 
 export async function resetTheme(): Promise<ActionState> {
-  await assertAuth();
-  const { id: _id, ...data } = defaultTheme;
-  void _id;
-  await prisma.themeSettings.update({ where: { id: "singleton" }, data });
-  revalidatePath("/", "layout");
+  const site = await getCurrentSite();
+  await prisma.themeSettings.update({ where: { siteId: site.id }, data: { ...defaultTheme } });
+  revalidatePath(`/${site.slug}`, "layout");
   revalidatePath("/admin/aparencia");
   return ok("Aparência restaurada para o padrão.");
 }

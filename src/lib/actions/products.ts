@@ -2,20 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import {
-  assertAuth,
-  bool,
-  fail,
-  isValidUrl,
-  num,
-  ok,
-  str,
-  type ActionState,
-} from "./helpers";
+import { getCurrentSite } from "@/lib/tenant";
+import { bool, fail, isValidUrl, num, ok, str, type ActionState } from "./helpers";
 
-function revalidate() {
-  revalidatePath("/", "layout");
-  revalidatePath("/loja");
+function revalidate(slug: string) {
+  revalidatePath(`/${slug}`, "layout");
+  revalidatePath(`/${slug}/loja`);
   revalidatePath("/admin/produtos");
 }
 
@@ -23,7 +15,7 @@ export async function saveProduct(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await assertAuth();
+  const site = await getCurrentSite();
 
   const id = str(formData, "id");
   const name = str(formData, "name");
@@ -48,35 +40,35 @@ export async function saveProduct(
   };
 
   if (id) {
-    await prisma.product.update({ where: { id }, data });
+    await prisma.product.updateMany({ where: { id, siteId: site.id }, data });
   } else {
-    const count = await prisma.product.count();
-    await prisma.product.create({ data: { ...data, order: data.order || count + 1 } });
+    const count = await prisma.product.count({ where: { siteId: site.id } });
+    await prisma.product.create({ data: { ...data, siteId: site.id, order: data.order || count + 1 } });
   }
 
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }
 
 export async function deleteProduct(id: string): Promise<ActionState> {
-  await assertAuth();
-  await prisma.product.delete({ where: { id } });
-  revalidate();
+  const site = await getCurrentSite();
+  await prisma.product.deleteMany({ where: { id, siteId: site.id } });
+  revalidate(site.slug);
   return ok("Produto removido com sucesso.");
 }
 
 export async function toggleProduct(id: string): Promise<ActionState> {
-  await assertAuth();
-  const item = await prisma.product.findUnique({ where: { id } });
+  const site = await getCurrentSite();
+  const item = await prisma.product.findFirst({ where: { id, siteId: site.id } });
   if (!item) return fail("Item não encontrado.");
   await prisma.product.update({ where: { id }, data: { isActive: !item.isActive } });
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }
 
 export async function moveProduct(id: string, dir: "up" | "down"): Promise<ActionState> {
-  await assertAuth();
-  const items = await prisma.product.findMany({ orderBy: { order: "asc" } });
+  const site = await getCurrentSite();
+  const items = await prisma.product.findMany({ where: { siteId: site.id }, orderBy: { order: "asc" } });
   const idx = items.findIndex((i) => i.id === id);
   const swap = dir === "up" ? idx - 1 : idx + 1;
   if (idx < 0 || swap < 0 || swap >= items.length) return ok();
@@ -84,6 +76,6 @@ export async function moveProduct(id: string, dir: "up" | "down"): Promise<Actio
     prisma.product.update({ where: { id: items[idx].id }, data: { order: items[swap].order } }),
     prisma.product.update({ where: { id: items[swap].id }, data: { order: items[idx].order } }),
   ]);
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }

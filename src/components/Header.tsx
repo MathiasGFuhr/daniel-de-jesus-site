@@ -5,11 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DynamicIcon, MenuIcon, SearchIcon } from "./Icons";
 import { SearchOverlay } from "./SearchOverlay";
-import { PUBLIC_NAV, type ShellData } from "@/lib/public-nav";
+import { PUBLIC_NAV, navHref, type ShellData } from "@/lib/public-nav";
 
-function isActive(pathname: string, href: string) {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(`${href}/`);
+function isActive(pathname: string, full: string, isHome: boolean) {
+  if (isHome) return pathname === full;
+  return pathname === full || pathname.startsWith(`${full}/`);
 }
 
 export function Header({
@@ -37,7 +37,7 @@ export function Header({
           <MenuIcon className="h-5 w-5" />
         </button>
 
-        <Link href="/" className="leading-none lg:hidden">
+        <Link href={data.basePath} className="leading-none lg:hidden">
           <span className="font-display text-lg uppercase tracking-[0.16em]">
             {data.artistName}
           </span>
@@ -45,11 +45,12 @@ export function Header({
 
         <nav className="hidden items-center gap-1 lg:flex">
           {PUBLIC_NAV.map((item) => {
-            const active = isActive(pathname, item.href);
+            const full = navHref(data.basePath, item.href);
+            const active = isActive(pathname, full, item.href === "");
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={full}
                 className={`relative px-3 py-2 text-[13px] uppercase tracking-[0.1em] transition-colors ${
                   active ? "text-ink" : "text-warm-gray hover:text-ink"
                 }`}
@@ -88,7 +89,7 @@ export function Header({
         </div>
       </div>
 
-      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} basePath={data.basePath} />
     </header>
   );
 }

@@ -1,18 +1,27 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Section, SectionHeading } from "@/components/ui";
 import { SongCard } from "@/components/SongCard";
 import { SpotifyEmbed } from "@/components/SpotifyEmbed";
-import { getSongs, getSpotifySettings } from "@/lib/data";
+import { getSiteBySlug, getSongs, getSpotifySettings } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Músicas",
   description: "Singles e EPs.",
 };
 
-export default async function MusicasPage() {
+export default async function MusicasPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const tenant = await getSiteBySlug(slug);
+  if (!tenant) notFound();
+
   const [songs, spotify] = await Promise.all([
-    getSongs(true),
-    getSpotifySettings(),
+    getSongs(tenant.id, true),
+    getSpotifySettings(tenant.id),
   ]);
 
   return (

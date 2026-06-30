@@ -1,0 +1,2 @@
+-- Estrutura multi-tenant consolidada na migração inicial (20260630064509_init).
+-- Esta migração é intencionalmente vazia (no-op).

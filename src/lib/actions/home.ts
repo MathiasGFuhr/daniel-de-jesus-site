@@ -2,19 +2,20 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { assertAuth, bool, fail, ok, str, type ActionState } from "./helpers";
+import { getCurrentSite } from "@/lib/tenant";
+import { bool, fail, ok, str, type ActionState } from "./helpers";
 
 export async function updateHome(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await assertAuth();
+  const site = await getCurrentSite();
 
   const title = str(formData, "title");
   if (!title) return fail("O título principal é obrigatório.", { title: "Obrigatório" });
 
   await prisma.homeContent.update({
-    where: { id: "singleton" },
+    where: { siteId: site.id },
     data: {
       eyebrow: str(formData, "eyebrow"),
       title,
@@ -37,8 +38,8 @@ export async function updateHome(
     },
   });
 
-  revalidatePath("/", "layout");
-  revalidatePath("/sobre");
+  revalidatePath(`/${site.slug}`, "layout");
+  revalidatePath(`/${site.slug}/sobre`);
   revalidatePath("/admin/home");
   return ok();
 }

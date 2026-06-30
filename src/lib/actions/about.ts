@@ -2,16 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { assertAuth, ok, str, type ActionState } from "./helpers";
+import { getCurrentSite } from "@/lib/tenant";
+import { ok, str, type ActionState } from "./helpers";
 
 export async function updateAbout(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await assertAuth();
+  const site = await getCurrentSite();
 
   await prisma.homeContent.update({
-    where: { id: "singleton" },
+    where: { siteId: site.id },
     data: {
       bioShort: str(formData, "bioShort"),
       bioFull: str(formData, "bioFull"),
@@ -21,7 +22,7 @@ export async function updateAbout(
     },
   });
 
-  revalidatePath("/sobre");
+  revalidatePath(`/${site.slug}/sobre`);
   revalidatePath("/admin/sobre");
   return ok();
 }

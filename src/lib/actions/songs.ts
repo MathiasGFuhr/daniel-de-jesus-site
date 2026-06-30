@@ -2,18 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import {
-  assertAuth,
-  bool,
-  fail,
-  ok,
-  str,
-  type ActionState,
-} from "./helpers";
+import { getCurrentSite } from "@/lib/tenant";
+import { bool, fail, ok, str, type ActionState } from "./helpers";
 
-function revalidate() {
-  revalidatePath("/", "layout");
-  revalidatePath("/musicas");
+function revalidate(slug: string) {
+  revalidatePath(`/${slug}`, "layout");
+  revalidatePath(`/${slug}/musicas`);
   revalidatePath("/admin/musicas");
 }
 
@@ -21,7 +15,7 @@ export async function saveSong(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await assertAuth();
+  const site = await getCurrentSite();
 
   const id = str(formData, "id");
   const title = str(formData, "title");
@@ -45,40 +39,40 @@ export async function saveSong(
   };
 
   if (isFeatured) {
-    await prisma.song.updateMany({ data: { isFeatured: false } });
+    await prisma.song.updateMany({ where: { siteId: site.id }, data: { isFeatured: false } });
   }
 
   if (id) {
-    await prisma.song.update({ where: { id }, data });
+    await prisma.song.updateMany({ where: { id, siteId: site.id }, data });
   } else {
-    const count = await prisma.song.count();
-    await prisma.song.create({ data: { ...data, order: count + 1 } });
+    const count = await prisma.song.count({ where: { siteId: site.id } });
+    await prisma.song.create({ data: { ...data, siteId: site.id, order: count + 1 } });
   }
 
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }
 
 export async function deleteSong(id: string): Promise<ActionState> {
-  await assertAuth();
-  await prisma.song.delete({ where: { id } });
-  revalidate();
+  const site = await getCurrentSite();
+  await prisma.song.deleteMany({ where: { id, siteId: site.id } });
+  revalidate(site.slug);
   return ok("Música removida com sucesso.");
 }
 
 export async function toggleSong(id: string): Promise<ActionState> {
-  await assertAuth();
-  const item = await prisma.song.findUnique({ where: { id } });
+  const site = await getCurrentSite();
+  const item = await prisma.song.findFirst({ where: { id, siteId: site.id } });
   if (!item) return fail("Item não encontrado.");
   await prisma.song.update({ where: { id }, data: { isActive: !item.isActive } });
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }
 
 export async function featureSong(id: string): Promise<ActionState> {
-  await assertAuth();
-  await prisma.song.updateMany({ data: { isFeatured: false } });
-  await prisma.song.update({ where: { id }, data: { isFeatured: true } });
-  revalidate();
+  const site = await getCurrentSite();
+  await prisma.song.updateMany({ where: { siteId: site.id }, data: { isFeatured: false } });
+  await prisma.song.updateMany({ where: { id, siteId: site.id }, data: { isFeatured: true } });
+  revalidate(site.slug);
   return ok("Lançamento principal definido.");
 }

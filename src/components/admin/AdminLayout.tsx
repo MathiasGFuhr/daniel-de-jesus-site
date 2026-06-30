@@ -6,9 +6,11 @@ import { AdminHeader } from "./AdminHeader";
 
 export function AdminLayout({
   userName,
+  siteName,
   children,
 }: {
   userName: string;
+  siteName: string;
   children: ReactNode;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -17,7 +19,7 @@ export function AdminLayout({
     <div className="min-h-screen bg-slate-50">
       {/* Sidebar desktop */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 bg-slate-900 lg:block">
-        <AdminSidebar />
+        <AdminSidebar siteName={siteName} />
       </aside>
 
       {/* Sidebar mobile */}
@@ -33,7 +35,7 @@ export function AdminLayout({
             menuOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <AdminSidebar onNavigate={() => setMenuOpen(false)} />
+          <AdminSidebar siteName={siteName} onNavigate={() => setMenuOpen(false)} />
         </aside>
       </div>
 

@@ -1,4 +1,5 @@
-// Prisma schema — Plataforma do cantor Daniel de Jesus
+// Prisma schema — Plataforma multi-cantor (multi-tenant)
+// Cada usuário tem um Site (cantor) e gerencia o próprio conteúdo.
 // Postgres (Supabase) em produção e desenvolvimento.
 
 datasource db {
@@ -16,12 +17,40 @@ model User {
   email        String   @unique
   passwordHash String
   role         String   @default("owner")
+  site         Site?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
 
+model Site {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  ownerId   String   @unique
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  siteSettings     SiteSettings?
+  themeSettings    ThemeSettings?
+  homeContent      HomeContent?
+  spotifySettings  SpotifySettings?
+  contactSettings  ContactSettings?
+  linkPage         LinkPage?
+  advancedSettings AdvancedSettings?
+  socialLinks      SocialLink[]
+  songs            Song[]
+  videos           Video[]
+  products         Product[]
+  linkButtons      LinkPageButton[]
+  contactMessages  ContactMessage[]
+
+  @@index([slug])
+}
+
 model SiteSettings {
-  id               String   @id @default("singleton")
+  id               String   @id @default(cuid())
+  siteId           String   @unique
+  site             Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
   siteName         String
   artistName       String
   artistLabel      String
@@ -38,7 +67,9 @@ model SiteSettings {
 }
 
 model ThemeSettings {
-  id              String   @id @default("singleton")
+  id              String   @id @default(cuid())
+  siteId          String   @unique
+  site            Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
   primaryColor    String
   secondaryColor  String
   accentColor     String
@@ -58,38 +89,42 @@ model ThemeSettings {
 }
 
 model HomeContent {
-  id                  String   @id @default("singleton")
-  eyebrow             String
-  title               String
-  slogan              String
-  description         String
-  imageUrl            String
-  primaryButtonLabel  String
-  primaryButtonUrl    String
+  id                   String   @id @default(cuid())
+  siteId               String   @unique
+  site                 Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  eyebrow              String
+  title                String
+  slogan               String
+  description          String
+  imageUrl             String
+  primaryButtonLabel   String
+  primaryButtonUrl     String
   secondaryButtonLabel String
-  secondaryButtonUrl  String
-  thirdButtonLabel    String
-  thirdButtonUrl      String
+  secondaryButtonUrl   String
+  thirdButtonLabel     String
+  thirdButtonUrl       String
   // seções (toggles)
-  showHero           Boolean @default(true)
-  showFeaturedVideo  Boolean @default(true)
-  showSpotify        Boolean @default(true)
-  showOfficialLinks  Boolean @default(true)
-  showProducts       Boolean @default(true)
-  showAbout          Boolean @default(true)
-  showContact        Boolean @default(true)
+  showHero          Boolean @default(true)
+  showFeaturedVideo Boolean @default(true)
+  showSpotify       Boolean @default(true)
+  showOfficialLinks Boolean @default(true)
+  showProducts      Boolean @default(true)
+  showAbout         Boolean @default(true)
+  showContact       Boolean @default(true)
   // bio (página sobre)
-  bioShort           String  @default("")
-  bioFull            String  @default("")
-  aboutImageUrl      String  @default("")
-  aboutGenre         String  @default("")
-  aboutYear          String  @default("")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  bioShort      String   @default("")
+  bioFull       String   @default("")
+  aboutImageUrl String   @default("")
+  aboutGenre    String   @default("")
+  aboutYear     String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model SocialLink {
   id        String   @id @default(cuid())
+  siteId    String
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
   label     String
   handle    String
   url       String
@@ -99,11 +134,13 @@ model SocialLink {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([order])
+  @@index([siteId, order])
 }
 
 model Song {
   id            String   @id @default(cuid())
+  siteId        String
+  site          Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
   title         String
   type          String
   year          String
@@ -120,11 +157,13 @@ model Song {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  @@index([order])
+  @@index([siteId, order])
 }
 
 model Video {
   id              String   @id @default(cuid())
+  siteId          String
+  site            Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
   title           String
   type            String
   description     String
@@ -138,11 +177,13 @@ model Video {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  @@index([order])
+  @@index([siteId, order])
 }
 
 model SpotifySettings {
-  id          String   @id @default("singleton")
+  id          String   @id @default(cuid())
+  siteId      String   @unique
+  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
   title       String
   artist      String
   description String
@@ -156,6 +197,8 @@ model SpotifySettings {
 
 model Product {
   id          String   @id @default(cuid())
+  siteId      String
+  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
   name        String
   category    String
   price       String
@@ -169,20 +212,24 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@index([order])
+  @@index([siteId, order])
 }
 
 model LinkPage {
-  id          String   @id @default("singleton")
-  avatarUrl   String
-  title       String
-  subtitle    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  siteId    String   @unique
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  avatarUrl String
+  title     String
+  subtitle  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model LinkPageButton {
   id        String   @id @default(cuid())
+  siteId    String
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
   label     String
   subtitle  String?
   url       String
@@ -193,11 +240,13 @@ model LinkPageButton {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([order])
+  @@index([siteId, order])
 }
 
 model ContactSettings {
-  id                  String   @id @default("singleton")
+  id                  String   @id @default(cuid())
+  siteId              String   @unique
+  site                Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
   email               String
   headline            String
   description         String
@@ -211,6 +260,8 @@ model ContactSettings {
 
 model ContactMessage {
   id          String   @id @default(cuid())
+  siteId      String
+  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
   name        String
   email       String
   contactType String
@@ -218,18 +269,20 @@ model ContactMessage {
   status      String   @default("novo")
   createdAt   DateTime @default(now())
 
-  @@index([status])
+  @@index([siteId, status])
 }
 
 model AdvancedSettings {
-  id               String   @id @default("singleton")
-  ownerName        String
-  ownerEmail       String
-  googleAnalyticsId String  @default("")
-  metaPixelId      String   @default("")
-  tiktokPixelId    String   @default("")
-  customHeadCode   String   @default("")
-  customFooterCode String   @default("")
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                String   @id @default(cuid())
+  siteId            String   @unique
+  site              Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  ownerName         String
+  ownerEmail        String
+  googleAnalyticsId String   @default("")
+  metaPixelId       String   @default("")
+  tiktokPixelId     String   @default("")
+  customHeadCode    String   @default("")
+  customFooterCode  String   @default("")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }

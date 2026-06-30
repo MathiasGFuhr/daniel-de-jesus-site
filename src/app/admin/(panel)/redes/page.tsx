@@ -1,9 +1,11 @@
 import { PageHeading } from "@/components/admin/AdminSection";
 import { SocialLinkManager } from "@/components/admin/SocialLinkManager";
 import { getSocialLinks } from "@/lib/data";
+import { getCurrentSite } from "@/lib/tenant";
 
 export default async function RedesPage() {
-  const items = await getSocialLinks();
+  const site = await getCurrentSite();
+  const items = await getSocialLinks(site.id);
   return (
     <>
       <PageHeading

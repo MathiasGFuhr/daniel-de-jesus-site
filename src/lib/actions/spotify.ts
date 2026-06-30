@@ -2,13 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { assertAuth, bool, fail, isValidUrl, ok, str, type ActionState } from "./helpers";
+import { getCurrentSite } from "@/lib/tenant";
+import { bool, fail, isValidUrl, ok, str, type ActionState } from "./helpers";
 
 export async function updateSpotify(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await assertAuth();
+  const site = await getCurrentSite();
 
   const embedUrl = str(formData, "embedUrl");
   if (!embedUrl) return fail("O embed do Spotify é obrigatório.", { embedUrl: "Obrigatório" });
@@ -20,7 +21,7 @@ export async function updateSpotify(
   }
 
   await prisma.spotifySettings.update({
-    where: { id: "singleton" },
+    where: { siteId: site.id },
     data: {
       title: str(formData, "title"),
       artist: str(formData, "artist"),
@@ -32,8 +33,8 @@ export async function updateSpotify(
     },
   });
 
-  revalidatePath("/", "layout");
-  revalidatePath("/spotify");
+  revalidatePath(`/${site.slug}`, "layout");
+  revalidatePath(`/${site.slug}/spotify`);
   revalidatePath("/admin/spotify");
   return ok();
 }

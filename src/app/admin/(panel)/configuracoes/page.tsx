@@ -2,21 +2,37 @@ import { PageHeading, AdminSection } from "@/components/admin/AdminSection";
 import { AdminForm } from "@/components/admin/AdminForm";
 import { TextInput } from "@/components/admin/TextInput";
 import { TextArea } from "@/components/admin/TextArea";
-import { updateAdvanced, updateCredentials, restoreDefaults } from "@/lib/actions/advanced";
+import { updateAdvanced, updateCredentials, updateSlug, restoreTheme } from "@/lib/actions/advanced";
 import { getAdvancedSettings } from "@/lib/data";
+import { getCurrentSite } from "@/lib/tenant";
 import { getSession } from "@/lib/auth";
 
 export default async function ConfiguracoesPage() {
-  const [a, session] = await Promise.all([getAdvancedSettings(), getSession()]);
+  const site = await getCurrentSite();
+  const [a, session] = await Promise.all([getAdvancedSettings(site.id), getSession()]);
 
   return (
     <>
       <PageHeading
         title="Configurações avançadas"
-        description="Conta, integrações de analytics e backup."
+        description="Conta, endereço público, integrações de analytics e backup."
       />
 
       <div className="space-y-8">
+        <AdminForm action={updateSlug} submitLabel="Salvar endereço">
+          <AdminSection
+            title="Endereço público"
+            description="É o link onde sua página fica disponível."
+          >
+            <TextInput
+              label="Endereço (slug)"
+              name="slug"
+              defaultValue={site.slug}
+              hint={`Sua página: /${site.slug}`}
+            />
+          </AdminSection>
+        </AdminForm>
+
         <AdminForm action={updateAdvanced} submitLabel="Salvar integrações">
           <AdminSection title="Proprietário">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -56,7 +72,7 @@ export default async function ConfiguracoesPage() {
 
         <AdminSection
           title="Backup e restauração"
-          description="Exporte todas as configurações ou restaure os valores padrão."
+          description="Exporte todas as configurações ou restaure as cores padrão."
         >
           <div className="flex flex-wrap items-center gap-3">
             <a
@@ -68,14 +84,14 @@ export default async function ConfiguracoesPage() {
             <form
               action={async () => {
                 "use server";
-                await restoreDefaults();
+                await restoreTheme();
               }}
             >
               <button
                 type="submit"
                 className="rounded-lg border border-rose-300 px-4 py-2.5 text-sm font-medium text-rose-600 hover:bg-rose-50"
               >
-                Restaurar configurações padrão
+                Restaurar aparência padrão
               </button>
             </form>
           </div>

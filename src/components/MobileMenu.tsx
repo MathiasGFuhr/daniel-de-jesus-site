@@ -4,11 +4,11 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DynamicIcon, CloseIcon, NavGlyph } from "./Icons";
-import { PUBLIC_NAV, type ShellData } from "@/lib/public-nav";
+import { PUBLIC_NAV, navHref, type ShellData } from "@/lib/public-nav";
 
-function isActive(pathname: string, href: string) {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(`${href}/`);
+function isActive(pathname: string, full: string, isHome: boolean) {
+  if (isHome) return pathname === full;
+  return pathname === full || pathname.startsWith(`${full}/`);
 }
 
 function splitName(name: string): [string, string] {
@@ -55,7 +55,7 @@ export function MobileMenu({
         }`}
       >
         <div className="flex items-center justify-between px-6 pt-7 pb-5">
-          <Link href="/" onClick={onClose} className="leading-none">
+          <Link href={data.basePath} onClick={onClose} className="leading-none">
             <span className="block font-display text-xl uppercase tracking-[0.18em]">
               {first}
             </span>
@@ -77,11 +77,12 @@ export function MobileMenu({
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-4">
           {PUBLIC_NAV.map((item) => {
-            const active = isActive(pathname, item.href);
+            const full = navHref(data.basePath, item.href);
+            const active = isActive(pathname, full, item.href === "");
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={full}
                 onClick={onClose}
                 className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-colors ${
                   active

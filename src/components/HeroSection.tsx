@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Container } from "./ui";
 import { ArrowRightIcon, LinkIcon, PlayIcon, SpotifyIcon } from "./Icons";
+import { resolvePublicHref } from "@/lib/public-nav";
 
 export interface HeroData {
   eyebrow: string;
@@ -26,9 +27,11 @@ function splitName(name: string): [string, string] {
 export function HeroSection({
   home,
   artistLabel,
+  basePath,
 }: {
   home: HeroData;
   artistLabel: string;
+  basePath: string;
 }) {
   const [first, rest] = splitName(home.title);
 
@@ -71,21 +74,21 @@ export function HeroSection({
 
           <div className="mt-9 flex flex-wrap items-center gap-3">
             <Link
-              href={home.primaryButtonUrl}
+              href={resolvePublicHref(basePath, home.primaryButtonUrl)}
               className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-cream transition-colors hover:bg-ink-soft"
             >
               <SpotifyIcon className="h-4 w-4" />
               {home.primaryButtonLabel}
             </Link>
             <Link
-              href={home.secondaryButtonUrl}
+              href={resolvePublicHref(basePath, home.secondaryButtonUrl)}
               className="inline-flex items-center gap-2 rounded-full border border-ink/15 bg-cream/80 px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-ink backdrop-blur transition-colors hover:border-ink/40"
             >
               <PlayIcon className="h-3.5 w-3.5" />
               {home.secondaryButtonLabel}
             </Link>
             <Link
-              href={home.thirdButtonUrl}
+              href={resolvePublicHref(basePath, home.thirdButtonUrl)}
               className="inline-flex items-center gap-2 rounded-full px-4 py-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-warm-gray transition-colors hover:text-ink"
             >
               <LinkIcon className="h-4 w-4" />

@@ -1,9 +1,11 @@
 import { PageHeading } from "@/components/admin/AdminSection";
 import { SongManager } from "@/components/admin/SongManager";
 import { getSongs } from "@/lib/data";
+import { getCurrentSite } from "@/lib/tenant";
 
 export default async function MusicasAdminPage() {
-  const items = await getSongs();
+  const site = await getCurrentSite();
+  const items = await getSongs(site.id);
   return (
     <>
       <PageHeading

@@ -6,9 +6,11 @@ import { ToggleSwitch } from "@/components/admin/ToggleSwitch";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { updateHome } from "@/lib/actions/home";
 import { getHomeContent } from "@/lib/data";
+import { getCurrentSite } from "@/lib/tenant";
 
 export default async function AdminHomePage() {
-  const h = await getHomeContent();
+  const site = await getCurrentSite();
+  const h = await getHomeContent(site.id);
 
   return (
     <>
@@ -17,7 +19,7 @@ export default async function AdminHomePage() {
         description="Conteúdo da seção principal e seções visíveis no site."
       />
 
-      <AdminForm action={updateHome} previewHref="/">
+      <AdminForm action={updateHome} previewHref={`/${site.slug}`}>
         <AdminSection title="Hero Section">
           <div className="grid gap-4 sm:grid-cols-2">
             <TextInput label="Texto acima do título" name="eyebrow" defaultValue={h.eyebrow} />

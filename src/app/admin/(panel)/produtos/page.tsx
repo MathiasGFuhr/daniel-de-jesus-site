@@ -1,11 +1,13 @@
 import { PageHeading } from "@/components/admin/AdminSection";
 import { ProductManager } from "@/components/admin/ProductManager";
 import { getProducts, getContactSettings } from "@/lib/data";
+import { getCurrentSite } from "@/lib/tenant";
 
 export default async function ProdutosPage() {
+  const site = await getCurrentSite();
   const [items, contact] = await Promise.all([
-    getProducts(),
-    getContactSettings(),
+    getProducts(site.id),
+    getContactSettings(site.id),
   ]);
   return (
     <>

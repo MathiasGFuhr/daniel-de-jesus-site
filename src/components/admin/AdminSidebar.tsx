@@ -40,14 +40,20 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
+export function AdminSidebar({
+  siteName,
+  onNavigate,
+}: {
+  siteName?: string;
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
   return (
     <nav className="flex h-full flex-col">
       <div className="px-6 py-5">
         <Link href="/admin" onClick={onNavigate} className="block leading-tight">
           <span className="text-xs uppercase tracking-[0.2em] text-slate-400">Painel</span>
-          <span className="block font-semibold text-white">Daniel de Jesus</span>
+          <span className="block font-semibold text-white">{siteName || "Painel administrativo"}</span>
         </Link>
       </div>
       <div className="flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">

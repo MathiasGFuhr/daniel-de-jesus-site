@@ -11,6 +11,7 @@ import {
   getVideos,
   getLinkButtons,
 } from "@/lib/data";
+import { getCurrentSite } from "@/lib/tenant";
 
 const shortcuts = [
   { label: "Editar Home", href: "/admin/home" },
@@ -22,17 +23,19 @@ const shortcuts = [
 ];
 
 export default async function AdminOverview() {
+  const currentSite = await getCurrentSite();
   const [site, theme, spotify, products, socials, songs, videos, buttons] =
     await Promise.all([
-      getSiteSettings(),
-      getThemeSettings(),
-      getSpotifySettings(),
-      getProducts(),
-      getSocialLinks(),
-      getSongs(),
-      getVideos(),
-      getLinkButtons(),
+      getSiteSettings(currentSite.id),
+      getThemeSettings(currentSite.id),
+      getSpotifySettings(currentSite.id),
+      getProducts(currentSite.id),
+      getSocialLinks(currentSite.id),
+      getSongs(currentSite.id),
+      getVideos(currentSite.id),
+      getLinkButtons(currentSite.id),
     ]);
+  const publicHref = `/${currentSite.slug}`;
 
   const featuredSong = songs.find((s) => s.isFeatured) ?? songs[0];
   const featuredVideo = videos.find((v) => v.isFeatured) ?? videos[0];
@@ -57,7 +60,7 @@ export default async function AdminOverview() {
         description="Resumo do site e atalhos rápidos para edição."
         action={
           <a
-            href="/"
+            href={publicHref}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800"

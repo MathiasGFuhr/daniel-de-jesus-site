@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { HeroSection } from "@/components/HeroSection";
 import { FeaturedVideo } from "@/components/FeaturedVideo";
 import { SpotifyEmbed } from "@/components/SpotifyEmbed";
@@ -6,7 +7,9 @@ import { OfficialLinks } from "@/components/OfficialLinks";
 import { ProductGrid } from "@/components/ProductGrid";
 import { Section, SectionHeading } from "@/components/ui";
 import { ArrowRightIcon } from "@/components/Icons";
+import { navHref } from "@/lib/public-nav";
 import {
+  getSiteBySlug,
   getHomeContent,
   getSiteSettings,
   getSpotifySettings,
@@ -16,16 +19,25 @@ import {
   getContactSettings,
 } from "@/lib/data";
 
-export default async function HomePage() {
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const tenant = await getSiteBySlug(slug);
+  if (!tenant) notFound();
+  const basePath = `/${tenant.slug}`;
+
   const [home, site, spotify, socials, products, videos, contact] =
     await Promise.all([
-      getHomeContent(),
-      getSiteSettings(),
-      getSpotifySettings(),
-      getSocialLinks(true),
-      getProducts(true),
-      getVideos(true),
-      getContactSettings(),
+      getHomeContent(tenant.id),
+      getSiteSettings(tenant.id),
+      getSpotifySettings(tenant.id),
+      getSocialLinks(tenant.id, true),
+      getProducts(tenant.id, true),
+      getVideos(tenant.id, true),
+      getContactSettings(tenant.id),
     ]);
 
   const featuredVideo = videos.find((v) => v.isFeatured) ?? videos[0];
@@ -33,7 +45,7 @@ export default async function HomePage() {
   return (
     <>
       {home.showHero && (
-        <HeroSection home={home} artistLabel={site.artistLabel} />
+        <HeroSection home={home} artistLabel={site.artistLabel} basePath={basePath} />
       )}
 
       {(home.showFeaturedVideo || home.showSpotify) && (
@@ -72,7 +84,7 @@ export default async function HomePage() {
             description={`Siga ${site.artistName} nas plataformas e acompanhe os lançamentos.`}
             action={
               <Link
-                href="/links"
+                href={navHref(basePath, "/links")}
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink hover:text-gold"
               >
                 Ver todos
@@ -92,7 +104,7 @@ export default async function HomePage() {
             description="Produtos oficiais e recomendações para ouvir e criar música com qualidade."
             action={
               <Link
-                href="/loja"
+                href={navHref(basePath, "/loja")}
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink hover:text-gold"
               >
                 Ver todos os produtos

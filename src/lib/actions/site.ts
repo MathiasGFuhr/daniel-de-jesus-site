@@ -2,19 +2,20 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { assertAuth, bool, fail, ok, str, type ActionState } from "./helpers";
+import { getCurrentSite } from "@/lib/tenant";
+import { bool, fail, ok, str, type ActionState } from "./helpers";
 
 export async function updateSiteSettings(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await assertAuth();
+  const site = await getCurrentSite();
 
   const artistName = str(formData, "artistName");
   if (!artistName) return fail("O nome do artista é obrigatório.", { artistName: "Obrigatório" });
 
   await prisma.siteSettings.update({
-    where: { id: "singleton" },
+    where: { siteId: site.id },
     data: {
       siteName: str(formData, "siteName"),
       artistName,
@@ -30,7 +31,7 @@ export async function updateSiteSettings(
     },
   });
 
-  revalidatePath("/", "layout");
+  revalidatePath(`/${site.slug}`, "layout");
   revalidatePath("/admin/site");
   return ok();
 }

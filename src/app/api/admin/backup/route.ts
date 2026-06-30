@@ -8,20 +8,26 @@ export async function GET() {
     return NextResponse.json({ ok: false, error: "Não autorizado." }, { status: 401 });
   }
 
+  const tenant = await prisma.site.findUnique({ where: { ownerId: session.sub } });
+  if (!tenant) {
+    return NextResponse.json({ ok: false, error: "Site não encontrado." }, { status: 404 });
+  }
+  const siteId = tenant.id;
+
   const [site, theme, home, spotify, contact, linkPage, advanced, socials, songs, videos, products, buttons] =
     await Promise.all([
-      prisma.siteSettings.findUnique({ where: { id: "singleton" } }),
-      prisma.themeSettings.findUnique({ where: { id: "singleton" } }),
-      prisma.homeContent.findUnique({ where: { id: "singleton" } }),
-      prisma.spotifySettings.findUnique({ where: { id: "singleton" } }),
-      prisma.contactSettings.findUnique({ where: { id: "singleton" } }),
-      prisma.linkPage.findUnique({ where: { id: "singleton" } }),
-      prisma.advancedSettings.findUnique({ where: { id: "singleton" } }),
-      prisma.socialLink.findMany(),
-      prisma.song.findMany(),
-      prisma.video.findMany(),
-      prisma.product.findMany(),
-      prisma.linkPageButton.findMany(),
+      prisma.siteSettings.findUnique({ where: { siteId } }),
+      prisma.themeSettings.findUnique({ where: { siteId } }),
+      prisma.homeContent.findUnique({ where: { siteId } }),
+      prisma.spotifySettings.findUnique({ where: { siteId } }),
+      prisma.contactSettings.findUnique({ where: { siteId } }),
+      prisma.linkPage.findUnique({ where: { siteId } }),
+      prisma.advancedSettings.findUnique({ where: { siteId } }),
+      prisma.socialLink.findMany({ where: { siteId } }),
+      prisma.song.findMany({ where: { siteId } }),
+      prisma.video.findMany({ where: { siteId } }),
+      prisma.product.findMany({ where: { siteId } }),
+      prisma.linkPageButton.findMany({ where: { siteId } }),
     ]);
 
   const backup = {

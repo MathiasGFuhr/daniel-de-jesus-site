@@ -2,18 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import {
-  assertAuth,
-  bool,
-  fail,
-  isValidUrl,
-  ok,
-  str,
-  type ActionState,
-} from "./helpers";
+import { getCurrentSite } from "@/lib/tenant";
+import { bool, fail, isValidUrl, ok, str, type ActionState } from "./helpers";
 
-function revalidate() {
-  revalidatePath("/links");
+function revalidate(slug: string) {
+  revalidatePath(`/${slug}/links`);
   revalidatePath("/admin/links");
 }
 
@@ -21,16 +14,16 @@ export async function updateLinkPage(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await assertAuth();
+  const site = await getCurrentSite();
   await prisma.linkPage.update({
-    where: { id: "singleton" },
+    where: { siteId: site.id },
     data: {
       avatarUrl: str(formData, "avatarUrl"),
       title: str(formData, "title"),
       subtitle: str(formData, "subtitle"),
     },
   });
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }
 
@@ -38,7 +31,7 @@ export async function saveLinkButton(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await assertAuth();
+  const site = await getCurrentSite();
 
   const id = str(formData, "id");
   const label = str(formData, "label");
@@ -57,39 +50,39 @@ export async function saveLinkButton(
   };
 
   if (isPrimary) {
-    await prisma.linkPageButton.updateMany({ data: { isPrimary: false } });
+    await prisma.linkPageButton.updateMany({ where: { siteId: site.id }, data: { isPrimary: false } });
   }
 
   if (id) {
-    await prisma.linkPageButton.update({ where: { id }, data });
+    await prisma.linkPageButton.updateMany({ where: { id, siteId: site.id }, data });
   } else {
-    const count = await prisma.linkPageButton.count();
-    await prisma.linkPageButton.create({ data: { ...data, order: count + 1 } });
+    const count = await prisma.linkPageButton.count({ where: { siteId: site.id } });
+    await prisma.linkPageButton.create({ data: { ...data, siteId: site.id, order: count + 1 } });
   }
 
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }
 
 export async function deleteLinkButton(id: string): Promise<ActionState> {
-  await assertAuth();
-  await prisma.linkPageButton.delete({ where: { id } });
-  revalidate();
+  const site = await getCurrentSite();
+  await prisma.linkPageButton.deleteMany({ where: { id, siteId: site.id } });
+  revalidate(site.slug);
   return ok("Botão removido com sucesso.");
 }
 
 export async function toggleLinkButton(id: string): Promise<ActionState> {
-  await assertAuth();
-  const item = await prisma.linkPageButton.findUnique({ where: { id } });
+  const site = await getCurrentSite();
+  const item = await prisma.linkPageButton.findFirst({ where: { id, siteId: site.id } });
   if (!item) return fail("Item não encontrado.");
   await prisma.linkPageButton.update({ where: { id }, data: { isActive: !item.isActive } });
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }
 
 export async function moveLinkButton(id: string, dir: "up" | "down"): Promise<ActionState> {
-  await assertAuth();
-  const items = await prisma.linkPageButton.findMany({ orderBy: { order: "asc" } });
+  const site = await getCurrentSite();
+  const items = await prisma.linkPageButton.findMany({ where: { siteId: site.id }, orderBy: { order: "asc" } });
   const idx = items.findIndex((i) => i.id === id);
   const swap = dir === "up" ? idx - 1 : idx + 1;
   if (idx < 0 || swap < 0 || swap >= items.length) return ok();
@@ -97,6 +90,6 @@ export async function moveLinkButton(id: string, dir: "up" | "down"): Promise<Ac
     prisma.linkPageButton.update({ where: { id: items[idx].id }, data: { order: items[swap].order } }),
     prisma.linkPageButton.update({ where: { id: items[swap].id }, data: { order: items[idx].order } }),
   ]);
-  revalidate();
+  revalidate(site.slug);
   return ok();
 }

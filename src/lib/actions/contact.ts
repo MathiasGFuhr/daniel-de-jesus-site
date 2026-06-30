@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { getCurrentSite } from "@/lib/tenant";
 import {
-  assertAuth,
   fail,
   isValidEmail,
   ok,
@@ -15,7 +15,7 @@ export async function updateContact(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await assertAuth();
+  const site = await getCurrentSite();
 
   const email = str(formData, "email");
   if (!email || !isValidEmail(email)) {
@@ -29,7 +29,7 @@ export async function updateContact(
     .filter(Boolean);
 
   await prisma.contactSettings.update({
-    where: { id: "singleton" },
+    where: { siteId: site.id },
     data: {
       email,
       headline: str(formData, "headline"),
@@ -41,16 +41,16 @@ export async function updateContact(
     },
   });
 
-  revalidatePath("/", "layout");
-  revalidatePath("/contato");
-  revalidatePath("/loja");
+  revalidatePath(`/${site.slug}`, "layout");
+  revalidatePath(`/${site.slug}/contato`);
+  revalidatePath(`/${site.slug}/loja`);
   revalidatePath("/admin/contato");
   return ok();
 }
 
 export async function deleteContactMessage(id: string): Promise<ActionState> {
-  await assertAuth();
-  await prisma.contactMessage.delete({ where: { id } });
+  const site = await getCurrentSite();
+  await prisma.contactMessage.deleteMany({ where: { id, siteId: site.id } });
   revalidatePath("/admin/contato");
   return ok("Mensagem removida com sucesso.");
 }

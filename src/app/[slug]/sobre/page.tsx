@@ -1,18 +1,34 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import { Section, Eyebrow } from "@/components/ui";
-import { getHomeContent, getSiteSettings, getSocialLinks } from "@/lib/data";
+import { getSiteBySlug, getHomeContent, getSiteSettings, getSocialLinks } from "@/lib/data";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const site = await getSiteSettings();
-  return { title: "Sobre", description: site.description };
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const tenant = await getSiteBySlug(slug);
+  if (!tenant) return { title: "Sobre" };
+  const site = await getSiteSettings(tenant.id);
+  return { title: `Sobre ${site.artistName}`, description: site.description };
 }
 
-export default async function SobrePage() {
+export default async function SobrePage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const tenant = await getSiteBySlug(slug);
+  if (!tenant) notFound();
+
   const [home, site, socials] = await Promise.all([
-    getHomeContent(),
-    getSiteSettings(),
-    getSocialLinks(true),
+    getHomeContent(tenant.id),
+    getSiteSettings(tenant.id),
+    getSocialLinks(tenant.id, true),
   ]);
 
   const bioParagraphs = home.bioFull.split("\n").filter((p) => p.trim());

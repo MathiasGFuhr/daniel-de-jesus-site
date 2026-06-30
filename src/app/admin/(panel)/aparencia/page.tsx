@@ -5,10 +5,12 @@ import { SelectInput } from "@/components/admin/SelectInput";
 import { TextInput } from "@/components/admin/TextInput";
 import { updateTheme, resetTheme } from "@/lib/actions/theme";
 import { getThemeSettings } from "@/lib/data";
+import { getCurrentSite } from "@/lib/tenant";
 import { FONT_OPTIONS } from "@/lib/defaults";
 
 export default async function AparenciaPage() {
-  const t = await getThemeSettings();
+  const site = await getCurrentSite();
+  const t = await getThemeSettings(site.id);
 
   return (
     <>
@@ -20,7 +22,7 @@ export default async function AparenciaPage() {
       <AdminForm
         action={updateTheme}
         submitLabel="Salvar aparência"
-        previewHref="/"
+        previewHref={`/${site.slug}`}
         extra={
           <form
             action={async () => {

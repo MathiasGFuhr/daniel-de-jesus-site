@@ -1,16 +1,25 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Section, SectionHeading } from "@/components/ui";
 import { ContactForm } from "@/components/ContactForm";
 import { ArrowUpRightIcon, ContactIcon } from "@/components/Icons";
-import { getContactSettings, parseContactTypes } from "@/lib/data";
+import { getSiteBySlug, getContactSettings, parseContactTypes } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Contato",
-  description: "Fale com a equipe: parcerias, divulgação, imprensa e comercial.",
+  description: "Fale comigo: parcerias, divulgação, imprensa e comercial.",
 };
 
-export default async function ContatoPage() {
-  const c = await getContactSettings();
+export default async function ContatoPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const tenant = await getSiteBySlug(slug);
+  if (!tenant) notFound();
+
+  const c = await getContactSettings(tenant.id);
   const types = parseContactTypes(c.contactTypes);
 
   return (
@@ -22,7 +31,7 @@ export default async function ContatoPage() {
       />
 
       <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr] lg:items-start">
-        <ContactForm types={types} />
+        <ContactForm types={types} siteSlug={tenant.slug} />
 
         <div className="space-y-4">
           <a

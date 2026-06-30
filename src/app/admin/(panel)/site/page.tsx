@@ -6,9 +6,11 @@ import { ToggleSwitch } from "@/components/admin/ToggleSwitch";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { updateSiteSettings } from "@/lib/actions/site";
 import { getSiteSettings } from "@/lib/data";
+import { getCurrentSite } from "@/lib/tenant";
 
 export default async function AdminSitePage() {
-  const s = await getSiteSettings();
+  const site = await getCurrentSite();
+  const s = await getSiteSettings(site.id);
 
   return (
     <>
@@ -17,7 +19,7 @@ export default async function AdminSitePage() {
         description="Informações gerais, identidade e status de publicação."
       />
 
-      <AdminForm action={updateSiteSettings} previewHref="/">
+      <AdminForm action={updateSiteSettings} previewHref={`/${site.slug}`}>
         <AdminSection title="Identidade">
           <div className="grid gap-4 sm:grid-cols-2">
             <TextInput label="Nome do projeto" name="siteName" defaultValue={s.siteName} />

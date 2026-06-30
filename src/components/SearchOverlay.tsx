@@ -2,15 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PUBLIC_NAV } from "@/lib/public-nav";
+import { PUBLIC_NAV, navHref } from "@/lib/public-nav";
 import { ArrowRightIcon, CloseIcon, SearchIcon } from "./Icons";
 
 export function SearchOverlay({
   open,
   onClose,
+  basePath,
 }: {
   open: boolean;
   onClose: () => void;
+  basePath: string;
 }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -81,7 +83,7 @@ export function SearchOverlay({
             <li key={item.href}>
               <button
                 type="button"
-                onClick={() => go(item.href)}
+                onClick={() => go(navHref(basePath, item.href))}
                 className="group flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm text-ink-soft transition-colors hover:bg-beige/50"
               >
                 <span>{item.label}</span>
