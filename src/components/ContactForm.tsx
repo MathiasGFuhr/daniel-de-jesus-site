@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRightIcon, CheckIcon } from "./Icons";
+import { usePublicI18n } from "./PublicI18nProvider";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -9,6 +10,7 @@ const inputClass =
   "w-full rounded-xl border border-line bg-cream-50 px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-warm-gray-light focus:border-gold focus:ring-2 focus:ring-gold/20";
 
 export function ContactForm({ types, siteSlug }: { types: string[]; siteSlug: string }) {
+  const { t } = usePublicI18n();
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
@@ -26,12 +28,12 @@ export function ContactForm({ types, siteSlug }: { types: string[]; siteSlug: st
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error("Falha ao enviar");
+      if (!res.ok) throw new Error("fail");
       setStatus("success");
       form.reset();
     } catch {
       setStatus("error");
-      setError("Não foi possível enviar agora. Tente novamente em instantes.");
+      setError(t("contact.error"));
     }
   }
 
@@ -42,17 +44,17 @@ export function ContactForm({ types, siteSlug }: { types: string[]; siteSlug: st
           <CheckIcon className="h-7 w-7" />
         </div>
         <h3 className="mt-4 font-display text-2xl text-ink">
-          Mensagem enviada!
+          {t("contact.successTitle")}
         </h3>
         <p className="mt-2 max-w-sm text-sm text-warm-gray">
-          Obrigado pelo contato. Retornaremos em breve.
+          {t("contact.successText")}
         </p>
         <button
           type="button"
           onClick={() => setStatus("idle")}
           className="mt-6 text-sm font-semibold text-gold hover:underline"
         >
-          Enviar outra mensagem
+          {t("contact.sendAnother")}
         </button>
       </div>
     );
@@ -66,47 +68,47 @@ export function ContactForm({ types, siteSlug }: { types: string[]; siteSlug: st
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="sm:col-span-1">
           <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.12em] text-warm-gray">
-            Nome
+            {t("contact.name")}
           </label>
-          <input name="nome" required className={inputClass} placeholder="Seu nome" />
+          <input name="nome" required className={inputClass} placeholder={t("contact.namePlaceholder")} />
         </div>
         <div className="sm:col-span-1">
           <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.12em] text-warm-gray">
-            E-mail
+            {t("contact.email")}
           </label>
           <input
             name="email"
             type="email"
             required
             className={inputClass}
-            placeholder="voce@email.com"
+            placeholder={t("contact.emailPlaceholder")}
           />
         </div>
         <div className="sm:col-span-2">
           <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.12em] text-warm-gray">
-            Tipo de contato
+            {t("contact.type")}
           </label>
           <select name="tipo" required defaultValue="" className={inputClass}>
             <option value="" disabled>
-              Selecione...
+              {t("contact.typePlaceholder")}
             </option>
-            {types.map((t) => (
-              <option key={t} value={t}>
-                {t}
+            {types.map((type) => (
+              <option key={type} value={type}>
+                {type}
               </option>
             ))}
           </select>
         </div>
         <div className="sm:col-span-2">
           <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.12em] text-warm-gray">
-            Mensagem
+            {t("contact.message")}
           </label>
           <textarea
             name="mensagem"
             required
             rows={5}
             className={`${inputClass} resize-none`}
-            placeholder="Escreva sua mensagem..."
+            placeholder={t("contact.messagePlaceholder")}
           />
         </div>
       </div>
@@ -120,7 +122,7 @@ export function ContactForm({ types, siteSlug }: { types: string[]; siteSlug: st
         disabled={status === "loading"}
         className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-cream transition-colors hover:bg-ink-soft disabled:opacity-60"
       >
-        {status === "loading" ? "Enviando..." : "Enviar mensagem"}
+        {status === "loading" ? t("contact.sending") : t("contact.send")}
         <ArrowRightIcon className="h-4 w-4" />
       </button>
     </form>

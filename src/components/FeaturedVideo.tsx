@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { PlayIcon, YoutubeIcon } from "./Icons";
+import { usePublicI18n } from "./PublicI18nProvider";
 
 export interface FeaturedVideoData {
   title: string;
@@ -15,6 +16,7 @@ export interface FeaturedVideoData {
 
 export function FeaturedVideo({ video }: { video: FeaturedVideoData }) {
   const [playing, setPlaying] = useState(false);
+  const { t } = usePublicI18n();
 
   return (
     <div className="overflow-hidden rounded-[20px] border border-line bg-cream-50 shadow-sm">
@@ -32,7 +34,7 @@ export function FeaturedVideo({ video }: { video: FeaturedVideoData }) {
             type="button"
             onClick={() => setPlaying(true)}
             className="group absolute inset-0 h-full w-full"
-            aria-label={`Reproduzir ${video.title}`}
+            aria-label={t("media.play", { title: video.title })}
           >
             {video.thumbnail && (
               <Image
@@ -66,7 +68,7 @@ export function FeaturedVideo({ video }: { video: FeaturedVideoData }) {
           className="inline-flex shrink-0 items-center gap-2 rounded-full border border-ink/15 px-5 py-2.5 text-[12px] font-semibold uppercase tracking-[0.1em] text-ink transition-colors hover:border-ink/40"
         >
           <YoutubeIcon className="h-4 w-4" />
-          Assistir no YouTube
+          {t("media.watchYoutube")}
         </a>
       </div>
     </div>

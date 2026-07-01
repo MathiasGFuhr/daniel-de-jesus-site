@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Section, Eyebrow } from "@/components/ui";
+import { getPublicI18n } from "@/lib/i18n";
 import { getSiteBySlug, getHomeContent, getSiteSettings, getSocialLinks } from "@/lib/data";
 
 export async function generateMetadata({
@@ -12,8 +13,12 @@ export async function generateMetadata({
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
   if (!tenant) return { title: "Sobre" };
+  const { t } = await getPublicI18n();
   const site = await getSiteSettings(tenant.id);
-  return { title: `Sobre ${site.artistName}`, description: site.description };
+  return {
+    title: t("about.title", { artist: site.artistName }),
+    description: site.description,
+  };
 }
 
 export default async function SobrePage({
@@ -24,6 +29,7 @@ export default async function SobrePage({
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
   if (!tenant) notFound();
+  const { t } = await getPublicI18n();
 
   const [home, site, socials] = await Promise.all([
     getHomeContent(tenant.id),
@@ -34,10 +40,10 @@ export default async function SobrePage({
   const bioParagraphs = home.bioFull.split("\n").filter((p) => p.trim());
   const aboutImage = home.aboutImageUrl || home.imageUrl;
   const facts = [
-    home.aboutGenre && { label: "Gênero musical", value: home.aboutGenre },
-    home.aboutYear && { label: "Ano de estreia", value: home.aboutYear },
+    home.aboutGenre && { label: t("about.genre"), value: home.aboutGenre },
+    home.aboutYear && { label: t("about.debutYear"), value: home.aboutYear },
     {
-      label: "Plataformas",
+      label: t("about.platforms"),
       value: socials.map((s) => s.label).slice(0, 4).join(", ") || "—",
     },
   ].filter(Boolean) as { label: string; value: string }[];
@@ -60,7 +66,7 @@ export default async function SobrePage({
         <div>
           <Eyebrow>{site.artistLabel}</Eyebrow>
           <h1 className="mt-3 font-display text-5xl tracking-tight text-ink">
-            Sobre {site.artistName}
+            {t("about.title", { artist: site.artistName })}
           </h1>
           <p className="mt-5 font-display text-xl italic leading-relaxed text-ink-soft">
             {home.bioShort}

@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NavGlyph, DynamicIcon } from "./Icons";
-import { PUBLIC_NAV, navHref, type ShellData } from "@/lib/public-nav";
+import { usePublicI18n } from "./PublicI18nProvider";
+import { navHref, type ShellData } from "@/lib/public-nav";
 
 function isActive(pathname: string, full: string, isHome: boolean) {
   if (isHome) return pathname === full;
@@ -18,6 +19,7 @@ function splitName(name: string): [string, string] {
 
 export function Sidebar({ data }: { data: ShellData }) {
   const pathname = usePathname();
+  const { t } = usePublicI18n();
   const [first, rest] = splitName(data.artistName);
   const platformLinks = data.socials.filter((l) =>
     ["spotify", "youtube", "apple", "deezer", "soundcloud"].includes(l.icon),
@@ -40,7 +42,7 @@ export function Sidebar({ data }: { data: ShellData }) {
       </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-4">
-        {PUBLIC_NAV.map((item) => {
+        {data.nav.map((item) => {
           const full = navHref(data.basePath, item.href);
           const active = isActive(pathname, full, item.href === "");
           return (
@@ -71,7 +73,7 @@ export function Sidebar({ data }: { data: ShellData }) {
       {platformLinks.length > 0 && (
         <div className="px-7 pb-4 pt-6">
           <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-cream-100/40">
-            Ouça agora
+            {t("sidebar.listenNow")}
           </p>
           <div className="flex items-center gap-2.5">
             {platformLinks.map((l) => (

@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import { Tag } from "./ui";
 import { AppleIcon, DeezerIcon, SpotifyIcon, YoutubeIcon } from "./Icons";
+import { usePublicI18n } from "./PublicI18nProvider";
 
 export interface SongData {
   id: string;
@@ -16,6 +19,7 @@ export interface SongData {
 }
 
 export function SongCard({ song }: { song: SongData }) {
+  const { t } = usePublicI18n();
   const platforms = [
     { url: song.spotifyUrl, label: "Spotify", Icon: SpotifyIcon },
     { url: song.youtubeUrl, label: "YouTube", Icon: YoutubeIcon },
@@ -56,7 +60,7 @@ export function SongCard({ song }: { song: SongData }) {
               href={url as string}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`Ouvir ${song.title} no ${label}`}
+              aria-label={t("media.listenOn", { title: song.title, platform: label })}
               className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-warm-gray transition-colors hover:border-gold hover:text-gold"
             >
               <Icon className="h-4 w-4" />

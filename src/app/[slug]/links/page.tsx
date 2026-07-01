@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { getPublicI18n } from "@/lib/i18n";
 import { getSiteBySlug, getLinkPage, getLinkButtons, getSocialLinks } from "@/lib/data";
 import { buildLinksPageItems } from "@/lib/links-page";
 import { resolvePublicHref } from "@/lib/public-nav";
 import { ArrowUpRightIcon, DynamicIcon } from "@/components/Icons";
 
-export const metadata: Metadata = {
-  title: "Links",
-  description: "Central de links oficiais.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getPublicI18n();
+  return { title: t("meta.links"), description: t("meta.linksDesc") };
+}
 
 function splitName(name: string): [string, string] {
   const parts = name.trim().split(/\s+/);

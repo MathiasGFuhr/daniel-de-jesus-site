@@ -1,0 +1,150 @@
+export const ptBR = {
+  localeName: "Português",
+  nav: {
+    home: "Início",
+    about: "Sobre",
+    music: "Músicas",
+    videos: "Vídeos",
+    spotify: "Spotify",
+    store: "Loja",
+    links: "Links",
+    contact: "Contato",
+  },
+  a11y: {
+    openMenu: "Abrir menu",
+    closeMenu: "Fechar menu",
+    search: "Buscar",
+    closeSearch: "Fechar busca",
+    closeAnnouncement: "Fechar aviso",
+    language: "Idioma da página",
+  },
+  search: {
+    placeholder: "Buscar páginas, músicas, loja...",
+    noResults: "Nenhum resultado encontrado.",
+  },
+  announcement: {
+    badge: "Novo lançamento",
+    text: "“{title}” já disponível em todas as plataformas!",
+    cta: "Ouça agora",
+  },
+  sidebar: {
+    listenNow: "Ouça agora",
+  },
+  footer: {
+    follow: "Acompanhe de perto",
+    followText: "Ouça os lançamentos e fique por dentro das novidades.",
+    listenSpotify: "Ouça no Spotify",
+    navigation: "Navegação",
+    contact: "Contato",
+    talkToMe: "Fale comigo",
+    rights: "Todos os direitos reservados.",
+    crafted: "Feito com cuidado · {name}",
+  },
+  maintenance: {
+    title: "Site em manutenção",
+    message: "Estamos preparando novidades. Volte em breve.",
+    soonTitle: "Em breve",
+    soonMessage: "Este site ainda não foi publicado.",
+  },
+  meta: {
+    notFound: "Página não encontrada",
+    links: "Links",
+    linksDesc: "Central de links oficiais.",
+    music: "Músicas",
+    musicDesc: "Singles e EPs.",
+    videos: "Vídeos",
+    videosDesc: "Clipes, lyric videos e bastidores.",
+    spotify: "Spotify",
+    spotifyDesc: "Ouça no Spotify.",
+    store: "Loja",
+    storeDesc: "Produtos oficiais e recomendações.",
+    contact: "Contato",
+    contactDesc: "Fale comigo: parcerias, divulgação, imprensa e comercial.",
+    about: "Sobre {artist}",
+  },
+  home: {
+    featuredVideo: "Vídeo em destaque",
+    latestRelease: "Último lançamento",
+    listenSpotify: "Ouça no Spotify",
+    latestEp: "Último EP",
+    whereFind: "Onde encontrar",
+    officialLinks: "Links oficiais",
+    followArtist: "Siga {artist} nas plataformas e acompanhe os lançamentos.",
+    seeAll: "Ver todos",
+    storeEyebrow: "Loja / Produtos",
+    officialStore: "Loja oficial",
+    storeDesc: "Produtos oficiais e recomendações para ouvir e criar música com qualidade.",
+    seeAllProducts: "Ver todos os produtos",
+  },
+  about: {
+    title: "Sobre {artist}",
+    genre: "Gênero musical",
+    debutYear: "Ano de estreia",
+    platforms: "Plataformas",
+  },
+  music: {
+    eyebrow: "Discografia",
+    title: "Músicas",
+    description: "Singles e EPs disponíveis no Spotify, YouTube, Apple Music e Deezer.",
+    featured: "Em destaque",
+    fullEp: "Ouça o EP completo",
+  },
+  videos: {
+    eyebrow: "Galeria",
+    title: "Vídeos",
+    description: "Clipes oficiais, lyric videos, bastidores e live sessions.",
+    close: "Fechar vídeo",
+  },
+  spotify: {
+    eyebrow: "Streaming",
+    title: "Ouça no Spotify",
+  },
+  store: {
+    eyebrow: "Loja / Produtos",
+    title: "Loja oficial",
+    description: "Produtos oficiais e recomendações para ouvir e criar música com qualidade.",
+    buy: "Comprar",
+    officialProduct: "Produto oficial",
+    affiliate: "Afiliado",
+  },
+  contact: {
+    eyebrow: "Fale conosco",
+    title: "Contato",
+    commercialEmail: "E-mail comercial",
+    name: "Nome",
+    namePlaceholder: "Seu nome",
+    email: "E-mail",
+    emailPlaceholder: "voce@email.com",
+    type: "Tipo de contato",
+    typePlaceholder: "Selecione...",
+    message: "Mensagem",
+    messagePlaceholder: "Escreva sua mensagem...",
+    sending: "Enviando...",
+    send: "Enviar mensagem",
+    successTitle: "Mensagem enviada!",
+    successText: "Obrigado pelo contato. Retornaremos em breve.",
+    sendAnother: "Enviar outra mensagem",
+    error: "Não foi possível enviar agora. Tente novamente em instantes.",
+  },
+  media: {
+    play: "Reproduzir {title}",
+    watchYoutube: "Assistir no YouTube",
+    openSpotify: "Abrir no Spotify",
+    listenOn: "Ouvir {title} no {platform}",
+  },
+  links: {
+    listenNow: "Ouça agora",
+    listenDeezer: "Ouça no Deezer",
+    openProfile: "Abrir perfil",
+  },
+} as const;
+
+type DeepString<T> = {
+  [K in keyof T]: T[K] extends string
+    ? string
+    : T[K] extends object
+      ? DeepString<T[K]>
+      : T[K];
+};
+
+export type Messages = DeepString<typeof ptBR>;

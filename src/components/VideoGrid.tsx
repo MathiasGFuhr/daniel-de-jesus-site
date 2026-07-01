@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Tag } from "./ui";
 import { CloseIcon, PlayIcon } from "./Icons";
+import { usePublicI18n } from "./PublicI18nProvider";
 
 export interface VideoData {
   id: string;
@@ -24,6 +25,7 @@ function toEmbedSrc(url: string): string {
 
 export function VideoGrid({ videos }: { videos: VideoData[] }) {
   const [active, setActive] = useState<VideoData | null>(null);
+  const { t } = usePublicI18n();
 
   return (
     <>
@@ -68,7 +70,7 @@ export function VideoGrid({ videos }: { videos: VideoData[] }) {
             <button
               type="button"
               onClick={() => setActive(null)}
-              aria-label="Fechar vídeo"
+              aria-label={t("videos.close")}
               className="absolute -top-11 right-0 flex h-9 w-9 items-center justify-center rounded-full bg-cream/90 text-ink hover:bg-cream"
             >
               <CloseIcon className="h-5 w-5" />

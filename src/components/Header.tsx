@@ -5,7 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DynamicIcon, MenuIcon, SearchIcon } from "./Icons";
 import { SearchOverlay } from "./SearchOverlay";
-import { PUBLIC_NAV, navHref, type ShellData } from "@/lib/public-nav";
+import { LocaleSwitcher } from "./LocaleSwitcher";
+import { usePublicI18n } from "./PublicI18nProvider";
+import { navHref, type ShellData } from "@/lib/public-nav";
 
 function isActive(pathname: string, full: string, isHome: boolean) {
   if (isHome) return pathname === full;
@@ -21,6 +23,7 @@ export function Header({
 }) {
   const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false);
+  const { t } = usePublicI18n();
   const socials = data.socials.filter((l) =>
     ["instagram", "tiktok", "youtube", "spotify"].includes(l.icon),
   );
@@ -31,7 +34,7 @@ export function Header({
         <button
           type="button"
           onClick={onOpenMenu}
-          aria-label="Abrir menu"
+          aria-label={t("a11y.openMenu")}
           className="flex h-10 w-10 items-center justify-center rounded-lg text-ink hover:bg-beige/60 lg:hidden"
         >
           <MenuIcon className="h-5 w-5" />
@@ -44,7 +47,7 @@ export function Header({
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
-          {PUBLIC_NAV.map((item) => {
+          {data.nav.map((item) => {
             const full = navHref(data.basePath, item.href);
             const active = isActive(pathname, full, item.href === "");
             return (
@@ -63,10 +66,12 @@ export function Header({
         </nav>
 
         <div className="ml-auto flex items-center gap-1.5 sm:gap-3">
+          <LocaleSwitcher locale={data.locale} slug={data.slug} />
+
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            aria-label="Buscar"
+            aria-label={t("a11y.search")}
             className="flex h-10 w-10 items-center justify-center rounded-lg text-ink hover:bg-beige/60"
           >
             <SearchIcon className="h-[18px] w-[18px]" />
@@ -89,7 +94,12 @@ export function Header({
         </div>
       </div>
 
-      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} basePath={data.basePath} />
+      <SearchOverlay
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        basePath={data.basePath}
+        nav={data.nav}
+      />
     </header>
   );
 }

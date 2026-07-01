@@ -3,12 +3,13 @@ import { notFound } from "next/navigation";
 import { Section, SectionHeading } from "@/components/ui";
 import { SongCard } from "@/components/SongCard";
 import { SpotifyEmbed } from "@/components/SpotifyEmbed";
+import { getPublicI18n } from "@/lib/i18n";
 import { getSiteBySlug, getSongs, getSpotifySettings } from "@/lib/data";
 
-export const metadata: Metadata = {
-  title: "Músicas",
-  description: "Singles e EPs.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getPublicI18n();
+  return { title: t("meta.music"), description: t("meta.musicDesc") };
+}
 
 export default async function MusicasPage({
   params,
@@ -18,6 +19,7 @@ export default async function MusicasPage({
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
   if (!tenant) notFound();
+  const { t } = await getPublicI18n();
 
   const [songs, spotify] = await Promise.all([
     getSongs(tenant.id, true),
@@ -27,9 +29,9 @@ export default async function MusicasPage({
   return (
     <Section>
       <SectionHeading
-        eyebrow="Discografia"
-        title="Músicas"
-        description="Singles e EPs disponíveis no Spotify, YouTube, Apple Music e Deezer."
+        eyebrow={t("music.eyebrow")}
+        title={t("music.title")}
+        description={t("music.description")}
       />
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -40,7 +42,7 @@ export default async function MusicasPage({
 
       {spotify.isActive && (
         <div className="mt-14">
-          <SectionHeading eyebrow="Em destaque" title="Ouça o EP completo" />
+          <SectionHeading eyebrow={t("music.featured")} title={t("music.fullEp")} />
           <SpotifyEmbed spotify={spotify} />
         </div>
       )}

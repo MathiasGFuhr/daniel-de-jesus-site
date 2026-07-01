@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { MaintenanceScreen } from "@/components/MaintenanceScreen";
 import { buildThemeCss } from "@/lib/theme-css";
+import { getPublicI18n } from "@/lib/i18n";
+import { buildPublicNav, type ShellData } from "@/lib/public-nav";
 import {
   getSiteBySlug,
   getSiteSettings,
@@ -12,7 +14,6 @@ import {
   getContactSettings,
   getSongs,
 } from "@/lib/data";
-import type { ShellData } from "@/lib/public-nav";
 
 export async function generateMetadata({
   params,
@@ -21,7 +22,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
-  if (!tenant) return { title: "Página não encontrada" };
+  const { t } = await getPublicI18n();
+  if (!tenant) return { title: t("meta.notFound") };
   const site = await getSiteSettings(tenant.id);
   return {
     title: {
@@ -49,6 +51,7 @@ export default async function PublicLayout({
   const tenant = await getSiteBySlug(slug);
   if (!tenant) notFound();
 
+  const { locale, messages, t } = await getPublicI18n();
   const basePath = `/${tenant.slug}`;
 
   const [site, theme, advanced, socials, contact, songs] = await Promise.all([
@@ -61,20 +64,34 @@ export default async function PublicLayout({
   ]);
 
   if (site.maintenanceMode) {
-    return <MaintenanceScreen title="Site em manutenção" message="Estamos preparando novidades. Volte em breve." artistName={site.artistName} />;
+    return (
+      <MaintenanceScreen
+        title={t("maintenance.title")}
+        message={t("maintenance.message")}
+        artistName={site.artistName}
+      />
+    );
   }
   if (!site.isPublished) {
-    return <MaintenanceScreen title="Em breve" message="Este site ainda não foi publicado." artistName={site.artistName} />;
+    return (
+      <MaintenanceScreen
+        title={t("maintenance.soonTitle")}
+        message={t("maintenance.soonMessage")}
+        artistName={site.artistName}
+      />
+    );
   }
 
   const featured = songs.find((s) => s.isFeatured) ?? songs[0];
-
   const spotifySocial = socials.find((s) => s.icon === "spotify");
   const announcementCta =
     featured?.spotifyUrl || spotifySocial?.url || `${basePath}/spotify`;
 
   const data: ShellData = {
     basePath,
+    slug: tenant.slug,
+    locale,
+    nav: buildPublicNav(messages),
     artistName: site.artistName,
     artistLabel: site.artistLabel,
     socials: socials.map((s) => ({
@@ -85,28 +102,34 @@ export default async function PublicLayout({
     })),
     announcement: {
       enabled: Boolean(featured),
-      badge: "Novo lançamento",
-      text: featured
-        ? `“${featured.title}” já disponível em todas as plataformas!`
-        : "",
-      ctaLabel: "Ouça agora",
+      badge: t("announcement.badge"),
+      text: featured ? t("announcement.text", { title: featured.title }) : "",
+      ctaLabel: t("announcement.cta"),
       ctaUrl: announcementCta,
     },
     footer: {
       text: site.footerText,
       email: contact.email,
       copyright: site.copyrightText,
-      rights: "Todos os direitos reservados.",
+      rights: t("footer.rights"),
+      crafted: t("footer.crafted", { name: site.artistName }),
     },
   };
 
   return (
     <>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `document.documentElement.lang=${JSON.stringify(locale)};`,
+        }}
+      />
       <style dangerouslySetInnerHTML={{ __html: buildThemeCss(theme) }} />
       {advanced.customHeadCode ? (
         <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: advanced.customHeadCode }} />
       ) : null}
-      <AppShell data={data}>{children}</AppShell>
+      <AppShell data={data} messages={messages}>
+        {children}
+      </AppShell>
       {advanced.customFooterCode ? (
         <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: advanced.customFooterCode }} />
       ) : null}

@@ -3,12 +3,13 @@ import { notFound } from "next/navigation";
 import { Section, SectionHeading } from "@/components/ui";
 import { ContactForm } from "@/components/ContactForm";
 import { ArrowUpRightIcon, ContactIcon } from "@/components/Icons";
+import { getPublicI18n } from "@/lib/i18n";
 import { getSiteBySlug, getContactSettings, parseContactTypes } from "@/lib/data";
 
-export const metadata: Metadata = {
-  title: "Contato",
-  description: "Fale comigo: parcerias, divulgação, imprensa e comercial.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getPublicI18n();
+  return { title: t("meta.contact"), description: t("meta.contactDesc") };
+}
 
 export default async function ContatoPage({
   params,
@@ -18,6 +19,7 @@ export default async function ContatoPage({
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
   if (!tenant) notFound();
+  const { t } = await getPublicI18n();
 
   const c = await getContactSettings(tenant.id);
   const types = parseContactTypes(c.contactTypes);
@@ -25,8 +27,8 @@ export default async function ContatoPage({
   return (
     <Section>
       <SectionHeading
-        eyebrow="Fale conosco"
-        title={c.headline || "Contato"}
+        eyebrow={t("contact.eyebrow")}
+        title={c.headline || t("contact.title")}
         description={c.description}
       />
 
@@ -42,7 +44,9 @@ export default async function ContatoPage({
               <ContactIcon className="h-5 w-5" />
             </span>
             <span className="flex-1">
-              <span className="block text-sm font-semibold text-ink">E-mail comercial</span>
+              <span className="block text-sm font-semibold text-ink">
+                {t("contact.commercialEmail")}
+              </span>
               <span className="block text-xs text-warm-gray">{c.email}</span>
             </span>
             <ArrowUpRightIcon className="h-4 w-4 text-warm-gray-light transition-colors group-hover:text-gold" />

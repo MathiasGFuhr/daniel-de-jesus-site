@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRightIcon, CloseIcon } from "./Icons";
+import { usePublicI18n } from "./PublicI18nProvider";
 import type { ShellData } from "@/lib/public-nav";
 
 export function AnnouncementBar({ data }: { data: ShellData["announcement"] }) {
   const [open, setOpen] = useState(true);
+  const { t } = usePublicI18n();
 
   if (!data.enabled || !open) return null;
 
@@ -32,7 +34,7 @@ export function AnnouncementBar({ data }: { data: ShellData["announcement"] }) {
       </div>
       <button
         type="button"
-        aria-label="Fechar aviso"
+        aria-label={t("a11y.closeAnnouncement")}
         onClick={() => setOpen(false)}
         className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-warm-gray transition-colors hover:bg-beige-200 hover:text-ink"
       >

@@ -1,4 +1,5 @@
 import { ArrowRightIcon, DynamicIcon } from "./Icons";
+import { getPublicI18n } from "@/lib/i18n";
 import { SOCIAL_PLATFORMS } from "@/lib/defaults";
 
 export interface OfficialLink {
@@ -68,14 +69,19 @@ function platformLabel(icon: string, label: string): string {
   return match?.label ?? label;
 }
 
-function displayHandle(handle: string, url: string, icon: string): string {
+function displayHandle(
+  handle: string,
+  url: string,
+  icon: string,
+  t: (key: string) => string,
+): string {
   const trimmed = handle?.trim();
   if (trimmed) return trimmed;
 
   const defaults: Record<string, string> = {
-    spotify: "Ouça agora",
+    spotify: t("links.listenNow"),
     apple: "Apple Music",
-    deezer: "Ouça no Deezer",
+    deezer: t("links.listenDeezer"),
     soundcloud: "SoundCloud",
   };
   if (defaults[icon]) return defaults[icon];
@@ -86,11 +92,12 @@ function displayHandle(handle: string, url: string, icon: string): string {
     if (segment) return segment.startsWith("@") ? segment : `@${segment}`;
     return parsed.hostname.replace(/^www\./, "");
   } catch {
-    return "Abrir perfil";
+    return t("links.openProfile");
   }
 }
 
-export function OfficialLinks({ links }: { links: OfficialLink[] }) {
+export async function OfficialLinks({ links }: { links: OfficialLink[] }) {
+  const { t } = await getPublicI18n();
   return (
     <div className="relative overflow-hidden rounded-[28px] border border-line/70 bg-gradient-to-br from-cream-50 via-cream-50 to-beige/25 p-5 sm:p-7 lg:p-8">
       <div
@@ -109,7 +116,7 @@ export function OfficialLinks({ links }: { links: OfficialLink[] }) {
         {links.map((link, index) => {
           const style = platformStyle[link.icon] ?? fallbackStyle;
           const name = platformLabel(link.icon, link.label);
-          const handle = displayHandle(link.handle, link.url, link.icon);
+          const handle = displayHandle(link.handle, link.url, link.icon, t);
 
           return (
             <a

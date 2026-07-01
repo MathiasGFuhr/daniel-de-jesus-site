@@ -2,26 +2,30 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PUBLIC_NAV, navHref } from "@/lib/public-nav";
+import { navHref, type PublicNavItem } from "@/lib/public-nav";
 import { ArrowRightIcon, CloseIcon, SearchIcon } from "./Icons";
+import { usePublicI18n } from "./PublicI18nProvider";
 
 export function SearchOverlay({
   open,
   onClose,
   basePath,
+  nav,
 }: {
   open: boolean;
   onClose: () => void;
   basePath: string;
+  nav: PublicNavItem[];
 }) {
   const router = useRouter();
+  const { t } = usePublicI18n();
   const [query, setQuery] = useState("");
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return PUBLIC_NAV;
-    return PUBLIC_NAV.filter((n) => n.label.toLowerCase().includes(q));
-  }, [query]);
+    if (!q) return nav;
+    return nav.filter((n) => n.label.toLowerCase().includes(q));
+  }, [query, nav]);
 
   useEffect(() => {
     if (!open) setQuery("");
@@ -61,13 +65,13 @@ export function SearchOverlay({
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar páginas, músicas, loja..."
+            placeholder={t("search.placeholder")}
             className="w-full bg-transparent text-base text-ink outline-none placeholder:text-warm-gray-light"
           />
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fechar busca"
+            aria-label={t("a11y.closeSearch")}
             className="rounded-lg p-1 text-warm-gray hover:bg-beige/60 hover:text-ink"
           >
             <CloseIcon className="h-5 w-5" />
@@ -76,7 +80,7 @@ export function SearchOverlay({
         <ul className="max-h-80 overflow-y-auto p-2">
           {results.length === 0 && (
             <li className="px-4 py-6 text-center text-sm text-warm-gray">
-              Nenhum resultado encontrado.
+              {t("search.noResults")}
             </li>
           )}
           {results.map((item) => (

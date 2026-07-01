@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import { Tag } from "./ui";
 import { ArrowUpRightIcon } from "./Icons";
+import { usePublicI18n } from "./PublicI18nProvider";
 
 export interface ProductData {
   id: string;
@@ -14,14 +17,22 @@ export interface ProductData {
   description: string;
 }
 
-function tagTone(tag: string): "neutral" | "gold" | "official" {
-  if (tag === "Produto oficial") return "official";
-  if (tag === "Afiliado") return "gold";
+function tagTone(tag: string, t: (key: string) => string): "neutral" | "gold" | "official" {
+  if (tag === t("store.officialProduct") || tag === "Produto oficial") return "official";
+  if (tag === t("store.affiliate") || tag === "Afiliado") return "gold";
   return "neutral";
 }
 
+function displayTag(tag: string, t: (key: string) => string): string {
+  if (tag === "Produto oficial") return t("store.officialProduct");
+  if (tag === "Afiliado") return t("store.affiliate");
+  return tag;
+}
+
 export function ProductCard({ product }: { product: ProductData }) {
-  const tag = product.tag || product.type;
+  const { t } = usePublicI18n();
+  const rawTag = product.tag || product.type;
+  const tag = displayTag(rawTag, t);
   return (
     <div className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-cream-50 transition-all hover:-translate-y-0.5 hover:shadow-lg">
       <div className="relative aspect-square w-full overflow-hidden bg-beige">
@@ -36,7 +47,7 @@ export function ProductCard({ product }: { product: ProductData }) {
         )}
         {tag && (
           <div className="absolute left-3 top-3">
-            <Tag tone={tagTone(tag)}>{tag}</Tag>
+            <Tag tone={tagTone(rawTag, t)}>{tag}</Tag>
           </div>
         )}
       </div>
@@ -60,7 +71,7 @@ export function ProductCard({ product }: { product: ProductData }) {
             rel="noopener noreferrer sponsored"
             className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-cream transition-colors hover:bg-gold hover:text-coal"
           >
-            Comprar
+            {t("store.buy")}
             <ArrowUpRightIcon className="h-3.5 w-3.5" />
           </a>
         </div>

@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRightIcon, DynamicIcon } from "./Icons";
-import { PUBLIC_NAV, navHref, type ShellData } from "@/lib/public-nav";
+import { usePublicI18n } from "./PublicI18nProvider";
+import { navHref, type ShellData } from "@/lib/public-nav";
 
 function splitName(name: string): [string, string] {
   const parts = name.trim().split(/\s+/);
@@ -9,22 +12,22 @@ function splitName(name: string): [string, string] {
 }
 
 export function Footer({ data }: { data: ShellData }) {
+  const { t } = usePublicI18n();
   const [first, rest] = splitName(data.artistName);
   const spotify = data.socials.find((s) => s.icon === "spotify");
-  const half = Math.ceil(PUBLIC_NAV.length / 2);
-  const navCols = [PUBLIC_NAV.slice(0, half), PUBLIC_NAV.slice(half)];
+  const half = Math.ceil(data.nav.length / 2);
+  const navCols = [data.nav.slice(0, half), data.nav.slice(half)];
 
   return (
     <footer className="mt-24 border-t border-line bg-cream-100">
-      {/* Faixa de destaque */}
       <div className="border-b border-line">
         <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-6 py-12 lg:flex-row lg:items-center lg:justify-between lg:px-10">
           <div className="max-w-md">
             <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold">
-              Acompanhe de perto
+              {t("footer.follow")}
             </p>
             <p className="mt-3 font-display text-2xl leading-snug text-ink sm:text-3xl">
-              Ouça os lançamentos e fique por dentro das novidades.
+              {t("footer.followText")}
             </p>
           </div>
           {spotify && (
@@ -34,7 +37,7 @@ export function Footer({ data }: { data: ShellData }) {
               rel="noopener noreferrer"
               className="group inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-cream transition-colors hover:bg-gold"
             >
-              Ouça no Spotify
+              {t("footer.listenSpotify")}
               <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </a>
           )}
@@ -43,7 +46,6 @@ export function Footer({ data }: { data: ShellData }) {
 
       <div className="mx-auto max-w-6xl px-6 py-16 lg:px-10">
         <div className="grid gap-12 md:grid-cols-[1.6fr_1fr_1fr] lg:gap-16">
-          {/* Marca */}
           <div>
             <Link
               href={data.basePath}
@@ -70,10 +72,9 @@ export function Footer({ data }: { data: ShellData }) {
             </div>
           </div>
 
-          {/* Navegação (2 colunas) */}
           <div>
             <h4 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink">
-              Navegação
+              {t("footer.navigation")}
             </h4>
             <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm text-warm-gray">
               {navCols.map((col, i) => (
@@ -93,10 +94,9 @@ export function Footer({ data }: { data: ShellData }) {
             </div>
           </div>
 
-          {/* Contato */}
           <div>
             <h4 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink">
-              Contato
+              {t("footer.contact")}
             </h4>
             <a
               href={`mailto:${data.footer.email}`}
@@ -108,7 +108,7 @@ export function Footer({ data }: { data: ShellData }) {
               href={navHref(data.basePath, "/contato")}
               className="mt-5 inline-flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
             >
-              Fale comigo
+              {t("footer.talkToMe")}
               <ArrowRightIcon className="h-3.5 w-3.5" />
             </Link>
           </div>
@@ -118,9 +118,7 @@ export function Footer({ data }: { data: ShellData }) {
           <p>
             {data.footer.copyright} — {data.footer.rights}
           </p>
-          <p className="tracking-wide">
-            Feito com cuidado · {first} {rest}
-          </p>
+          <p className="tracking-wide">{data.footer.crafted}</p>
         </div>
       </div>
     </footer>

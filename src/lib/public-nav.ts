@@ -1,4 +1,7 @@
 import type { NavIconName } from "@/components/Icons";
+import type { Locale } from "@/lib/i18n-shared";
+import { translate } from "@/lib/i18n-shared";
+import type { Messages } from "@/messages/pt-BR";
 
 export interface PublicNavItem {
   label: string;
@@ -6,17 +9,31 @@ export interface PublicNavItem {
   icon: NavIconName;
 }
 
-// Navegação do site público. `href` é relativo ao site do cantor (basePath).
-export const PUBLIC_NAV: PublicNavItem[] = [
-  { label: "Início", href: "", icon: "home" },
-  { label: "Sobre", href: "/sobre", icon: "about" },
-  { label: "Músicas", href: "/musicas", icon: "music" },
-  { label: "Vídeos", href: "/videos", icon: "video" },
-  { label: "Spotify", href: "/spotify", icon: "spotify" },
-  { label: "Loja", href: "/loja", icon: "store" },
-  { label: "Links", href: "/links", icon: "link" },
-  { label: "Contato", href: "/contato", icon: "contact" },
+export const PUBLIC_NAV_CONFIG: { key: string; href: string; icon: NavIconName }[] = [
+  { key: "nav.home", href: "", icon: "home" },
+  { key: "nav.about", href: "/sobre", icon: "about" },
+  { key: "nav.music", href: "/musicas", icon: "music" },
+  { key: "nav.videos", href: "/videos", icon: "video" },
+  { key: "nav.spotify", href: "/spotify", icon: "spotify" },
+  { key: "nav.store", href: "/loja", icon: "store" },
+  { key: "nav.links", href: "/links", icon: "link" },
+  { key: "nav.contact", href: "/contato", icon: "contact" },
 ];
+
+/** @deprecated Use buildPublicNav(messages) via ShellData.nav */
+export const PUBLIC_NAV: PublicNavItem[] = PUBLIC_NAV_CONFIG.map((item) => ({
+  label: item.key,
+  href: item.href,
+  icon: item.icon,
+}));
+
+export function buildPublicNav(messages: Messages): PublicNavItem[] {
+  return PUBLIC_NAV_CONFIG.map((item) => ({
+    label: translate(messages, item.key),
+    href: item.href,
+    icon: item.icon,
+  }));
+}
 
 /** Resolve um href relativo do site para o caminho público completo. */
 export function navHref(basePath: string, href: string): string {
@@ -45,6 +62,9 @@ export interface ShellSocial {
 
 export interface ShellData {
   basePath: string;
+  slug: string;
+  locale: Locale;
+  nav: PublicNavItem[];
   artistName: string;
   artistLabel: string;
   socials: ShellSocial[];
@@ -60,5 +80,6 @@ export interface ShellData {
     email: string;
     copyright: string;
     rights: string;
+    crafted: string;
   };
 }

@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DynamicIcon, CloseIcon, NavGlyph } from "./Icons";
-import { PUBLIC_NAV, navHref, type ShellData } from "@/lib/public-nav";
+import { usePublicI18n } from "./PublicI18nProvider";
+import { navHref, type ShellData } from "@/lib/public-nav";
 
 function isActive(pathname: string, full: string, isHome: boolean) {
   if (isHome) return pathname === full;
@@ -27,6 +28,7 @@ export function MobileMenu({
   data: ShellData;
 }) {
   const pathname = usePathname();
+  const { t } = usePublicI18n();
   const [first, rest] = splitName(data.artistName);
 
   useEffect(() => {
@@ -68,7 +70,7 @@ export function MobileMenu({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fechar menu"
+            aria-label={t("a11y.closeMenu")}
             className="rounded-lg p-2 text-cream-100/70 hover:bg-white/10 hover:text-cream"
           >
             <CloseIcon className="h-5 w-5" />
@@ -76,7 +78,7 @@ export function MobileMenu({
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-4">
-          {PUBLIC_NAV.map((item) => {
+          {data.nav.map((item) => {
             const full = navHref(data.basePath, item.href);
             const active = isActive(pathname, full, item.href === "");
             return (

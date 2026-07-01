@@ -1,4 +1,7 @@
+"use client";
+
 import { ArrowUpRightIcon, SpotifyIcon } from "./Icons";
+import { usePublicI18n } from "./PublicI18nProvider";
 
 export interface SpotifyData {
   title: string;
@@ -15,6 +18,8 @@ export function SpotifyEmbed({
   spotify: SpotifyData;
   withPlayer?: boolean;
 }) {
+  const { t } = usePublicI18n();
+
   return (
     <div className="overflow-hidden rounded-[20px] border border-line bg-cream-50 shadow-sm">
       <div className="flex flex-col gap-4 border-b border-line p-5 sm:flex-row sm:items-center sm:justify-between">
@@ -33,7 +38,7 @@ export function SpotifyEmbed({
             className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#1DB954] px-5 py-2.5 text-[12px] font-semibold uppercase tracking-[0.1em] text-white transition-opacity hover:opacity-90"
           >
             <SpotifyIcon className="h-4 w-4" />
-            Abrir no Spotify
+            {t("media.openSpotify")}
             <ArrowUpRightIcon className="h-3.5 w-3.5" />
           </a>
         )}

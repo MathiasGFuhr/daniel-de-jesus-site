@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Section, SectionHeading } from "@/components/ui";
 import { SpotifyEmbed } from "@/components/SpotifyEmbed";
+import { getPublicI18n } from "@/lib/i18n";
 import { getSiteBySlug, getSpotifySettings } from "@/lib/data";
 
-export const metadata: Metadata = {
-  title: "Spotify",
-  description: "Ouça no Spotify.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getPublicI18n();
+  return { title: t("meta.spotify"), description: t("meta.spotifyDesc") };
+}
 
 export default async function SpotifyPage({
   params,
@@ -17,14 +18,15 @@ export default async function SpotifyPage({
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
   if (!tenant) notFound();
+  const { t } = await getPublicI18n();
 
   const s = await getSpotifySettings(tenant.id);
 
   return (
     <Section>
       <SectionHeading
-        eyebrow="Streaming"
-        title="Ouça no Spotify"
+        eyebrow={t("spotify.eyebrow")}
+        title={t("spotify.title")}
         description={`${s.title} — ${s.description}`}
       />
       <div className="max-w-3xl">
