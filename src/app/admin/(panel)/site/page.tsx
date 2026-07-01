@@ -64,11 +64,11 @@ export default async function AdminSitePage() {
         </AdminSection>
 
         <AdminSection
-          title="Idioma da página pública"
-          description="Define o idioma padrão do site para visitantes. Eles também podem trocar pelo seletor PT / EN / ES no topo do site."
+          title="Idioma do site"
+          description="Escolha em qual idioma menus, botões e textos do sistema aparecem para todos os visitantes do seu canal."
         >
           <SelectInput
-            label="Idioma padrão"
+            label="Idioma do canal"
             name="defaultLocale"
             defaultValue={s.defaultLocale}
             options={[
@@ -76,7 +76,7 @@ export default async function AdminSitePage() {
               { value: "en", label: "English" },
               { value: "es", label: "Español" },
             ]}
-            hint="Menus, botões e textos do sistema mudam conforme o idioma escolhido."
+            hint="Todo o site público será exibido neste idioma. O visitante não escolhe — você define aqui."
           />
         </AdminSection>
       </AdminForm>

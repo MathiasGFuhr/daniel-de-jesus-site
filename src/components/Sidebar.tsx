@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NavGlyph, DynamicIcon } from "./Icons";
-import { LocaleSwitcher } from "./LocaleSwitcher";
 import { usePublicI18n } from "./PublicI18nProvider";
 import { navHref, type ShellData } from "@/lib/public-nav";
 
@@ -92,10 +91,6 @@ export function Sidebar({ data }: { data: ShellData }) {
           </div>
         </div>
       )}
-
-      <div className="px-7 pb-4">
-        <LocaleSwitcher locale={data.locale} slug={data.slug} variant="dark" />
-      </div>
 
       <div className="border-t border-white/[0.06] px-7 py-5 text-[11px] leading-relaxed text-cream-100/40">
         <p>{data.footer.copyright}</p>

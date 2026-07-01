@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DynamicIcon, CloseIcon, NavGlyph } from "./Icons";
-import { LocaleSwitcher } from "./LocaleSwitcher";
 import { usePublicI18n } from "./PublicI18nProvider";
 import { navHref, type ShellData } from "@/lib/public-nav";
 
@@ -103,8 +102,7 @@ export function MobileMenu({
           })}
         </nav>
 
-        <div className="px-6 pb-6 pt-4 space-y-4">
-          <LocaleSwitcher locale={data.locale} slug={data.slug} variant="dark" />
+        <div className="px-6 pb-6 pt-4">
           <div className="flex items-center gap-2.5">
             {data.socials.map((l) => (
               <a

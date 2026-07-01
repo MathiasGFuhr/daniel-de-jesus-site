@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DynamicIcon, MenuIcon, SearchIcon } from "./Icons";
 import { SearchOverlay } from "./SearchOverlay";
-import { LocaleSwitcher } from "./LocaleSwitcher";
 import { usePublicI18n } from "./PublicI18nProvider";
 import { navHref, type ShellData } from "@/lib/public-nav";
 
@@ -66,8 +65,6 @@ export function Header({
         </nav>
 
         <div className="ml-auto flex items-center gap-1.5 sm:gap-3">
-          <LocaleSwitcher locale={data.locale} slug={data.slug} />
-
           <button
             type="button"
             onClick={() => setSearchOpen(true)}

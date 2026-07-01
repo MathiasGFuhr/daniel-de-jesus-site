@@ -1,0 +1,3 @@
+fix: idioma do site definido só pelo dono no painel admin
+
+Remove o seletor de idioma do visitante; o site público usa exclusivamente o idioma configurado em Site.
