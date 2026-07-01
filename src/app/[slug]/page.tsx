@@ -77,7 +77,7 @@ export default async function HomePage({
       )}
 
       {home.showOfficialLinks && socials.length > 0 && (
-        <Section className="bg-cream-100/60">
+        <Section className="bg-cream-100/40">
           <SectionHeading
             eyebrow="Onde encontrar"
             title="Links oficiais"
@@ -85,10 +85,10 @@ export default async function HomePage({
             action={
               <Link
                 href={navHref(basePath, "/links")}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink hover:text-gold"
+                className="inline-flex items-center gap-2 rounded-full border border-line bg-cream-50 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink transition-colors hover:border-gold/50 hover:text-gold"
               >
                 Ver todos
-                <ArrowRightIcon className="h-4 w-4" />
+                <ArrowRightIcon className="h-3.5 w-3.5" />
               </Link>
             }
           />
