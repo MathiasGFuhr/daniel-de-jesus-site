@@ -64,6 +64,14 @@ export const es: Messages = {
     contactDesc: "Contacto: alianzas, prensa y comercial.",
     about: "Sobre {artist}",
   },
+  hero: {
+    eyebrow: "Cantante y compositor",
+    slogan: "Música que toca el alma.",
+    description: "Un artista que transforma sentimientos en música.",
+    primaryButton: "Escuchar en Spotify",
+    secondaryButton: "Ver video",
+    thirdButton: "Ver enlaces",
+  },
   home: {
     featuredVideo: "Video destacado",
     latestRelease: "Último lanzamiento",

@@ -62,6 +62,14 @@ export const ptBR = {
     contactDesc: "Fale comigo: parcerias, divulgação, imprensa e comercial.",
     about: "Sobre {artist}",
   },
+  hero: {
+    eyebrow: "Cantor e compositor",
+    slogan: "Música que toca a alma.",
+    description: "Um artista que transforma sentimentos em música.",
+    primaryButton: "Ouça no Spotify",
+    secondaryButton: "Assistir vídeo",
+    thirdButton: "Ver links",
+  },
   home: {
     featuredVideo: "Vídeo em destaque",
     latestRelease: "Último lançamento",

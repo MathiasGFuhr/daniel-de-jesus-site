@@ -8,6 +8,7 @@ import { ProductGrid } from "@/components/ProductGrid";
 import { Section, SectionHeading } from "@/components/ui";
 import { ArrowRightIcon } from "@/components/Icons";
 import { getPublicI18n } from "@/lib/i18n";
+import { localizeArtistLabel, localizeHome } from "@/lib/localize-content";
 import { navHref } from "@/lib/public-nav";
 import {
   getSiteBySlug,
@@ -28,7 +29,7 @@ export default async function HomePage({
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
   if (!tenant) notFound();
-  const { t } = await getPublicI18n(slug);
+  const { t, locale } = await getPublicI18n(slug);
   const basePath = `/${tenant.slug}`;
 
   const [home, site, spotify, socials, products, videos, contact] =
@@ -43,11 +44,13 @@ export default async function HomePage({
     ]);
 
   const featuredVideo = videos.find((v) => v.isFeatured) ?? videos[0];
+  const hero = localizeHome(home, t, locale);
+  const artistLabel = localizeArtistLabel(site.artistLabel, t, locale);
 
   return (
     <>
       {home.showHero && (
-        <HeroSection home={home} artistLabel={site.artistLabel} basePath={basePath} />
+        <HeroSection home={hero} artistLabel={artistLabel} basePath={basePath} />
       )}
 
       {(home.showFeaturedVideo || home.showSpotify) && (

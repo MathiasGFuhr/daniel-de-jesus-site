@@ -64,6 +64,14 @@ export const en: Messages = {
     contactDesc: "Get in touch: partnerships, press and business.",
     about: "About {artist}",
   },
+  hero: {
+    eyebrow: "Singer and songwriter",
+    slogan: "Music that touches the soul.",
+    description: "An artist who turns feelings into music.",
+    primaryButton: "Listen on Spotify",
+    secondaryButton: "Watch video",
+    thirdButton: "View links",
+  },
   home: {
     featuredVideo: "Featured video",
     latestRelease: "Latest release",
