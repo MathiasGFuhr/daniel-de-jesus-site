@@ -13,7 +13,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
   if (!tenant) return { title: "Sobre" };
-  const { t } = await getPublicI18n();
+  const { t } = await getPublicI18n(slug);
   const site = await getSiteSettings(tenant.id);
   return {
     title: t("about.title", { artist: site.artistName }),
@@ -29,7 +29,7 @@ export default async function SobrePage({
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
   if (!tenant) notFound();
-  const { t } = await getPublicI18n();
+  const { t } = await getPublicI18n(slug);
 
   const [home, site, socials] = await Promise.all([
     getHomeContent(tenant.id),

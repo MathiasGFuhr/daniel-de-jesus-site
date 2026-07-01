@@ -28,7 +28,7 @@ export default async function HomePage({
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
   if (!tenant) notFound();
-  const { t } = await getPublicI18n();
+  const { t } = await getPublicI18n(slug);
   const basePath = `/${tenant.slug}`;
 
   const [home, site, spotify, socials, products, videos, contact] =
@@ -100,7 +100,7 @@ export default async function HomePage({
               </Link>
             }
           />
-          <OfficialLinks links={socials} />
+          <OfficialLinks links={socials} slug={tenant.slug} />
         </Section>
       )}
 

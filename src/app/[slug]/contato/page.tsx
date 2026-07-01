@@ -6,8 +6,13 @@ import { ArrowUpRightIcon, ContactIcon } from "@/components/Icons";
 import { getPublicI18n } from "@/lib/i18n";
 import { getSiteBySlug, getContactSettings, parseContactTypes } from "@/lib/data";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getPublicI18n();
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const { t } = await getPublicI18n(slug);
   return { title: t("meta.contact"), description: t("meta.contactDesc") };
 }
 
@@ -19,7 +24,7 @@ export default async function ContatoPage({
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
   if (!tenant) notFound();
-  const { t } = await getPublicI18n();
+  const { t } = await getPublicI18n(slug);
 
   const c = await getContactSettings(tenant.id);
   const types = parseContactTypes(c.contactTypes);

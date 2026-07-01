@@ -7,8 +7,13 @@ import { buildLinksPageItems } from "@/lib/links-page";
 import { resolvePublicHref } from "@/lib/public-nav";
 import { ArrowUpRightIcon, DynamicIcon } from "@/components/Icons";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getPublicI18n();
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const { t } = await getPublicI18n(slug);
   return { title: t("meta.links"), description: t("meta.linksDesc") };
 }
 

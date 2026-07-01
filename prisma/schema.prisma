@@ -62,6 +62,7 @@ model SiteSettings {
   faviconUrl       String
   isPublished      Boolean  @default(true)
   maintenanceMode  Boolean  @default(false)
+  defaultLocale    String   @default("pt-BR")
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }

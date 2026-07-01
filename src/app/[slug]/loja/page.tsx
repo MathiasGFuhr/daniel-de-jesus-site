@@ -5,8 +5,13 @@ import { ProductGrid } from "@/components/ProductGrid";
 import { getPublicI18n } from "@/lib/i18n";
 import { getSiteBySlug, getProducts, getContactSettings } from "@/lib/data";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getPublicI18n();
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const { t } = await getPublicI18n(slug);
   return { title: t("meta.store"), description: t("meta.storeDesc") };
 }
 
@@ -18,7 +23,7 @@ export default async function LojaPage({
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
   if (!tenant) notFound();
-  const { t } = await getPublicI18n();
+  const { t } = await getPublicI18n(slug);
 
   const [products, contact] = await Promise.all([
     getProducts(tenant.id, true),

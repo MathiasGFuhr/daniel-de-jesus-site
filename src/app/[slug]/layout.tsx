@@ -22,7 +22,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
-  const { t } = await getPublicI18n();
+  const { t } = await getPublicI18n(slug);
   if (!tenant) return { title: t("meta.notFound") };
   const site = await getSiteSettings(tenant.id);
   return {
@@ -51,7 +51,7 @@ export default async function PublicLayout({
   const tenant = await getSiteBySlug(slug);
   if (!tenant) notFound();
 
-  const { locale, messages, t } = await getPublicI18n();
+  const { locale, messages, t } = await getPublicI18n(slug);
   const basePath = `/${tenant.slug}`;
 
   const [site, theme, advanced, socials, contact, songs] = await Promise.all([

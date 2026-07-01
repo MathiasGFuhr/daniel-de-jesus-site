@@ -6,8 +6,13 @@ import { SpotifyEmbed } from "@/components/SpotifyEmbed";
 import { getPublicI18n } from "@/lib/i18n";
 import { getSiteBySlug, getSongs, getSpotifySettings } from "@/lib/data";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getPublicI18n();
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const { t } = await getPublicI18n(slug);
   return { title: t("meta.music"), description: t("meta.musicDesc") };
 }
 
@@ -19,7 +24,7 @@ export default async function MusicasPage({
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
   if (!tenant) notFound();
-  const { t } = await getPublicI18n();
+  const { t } = await getPublicI18n(slug);
 
   const [songs, spotify] = await Promise.all([
     getSongs(tenant.id, true),

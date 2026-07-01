@@ -5,8 +5,13 @@ import { VideoGrid } from "@/components/VideoGrid";
 import { getPublicI18n } from "@/lib/i18n";
 import { getSiteBySlug, getVideos } from "@/lib/data";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getPublicI18n();
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const { t } = await getPublicI18n(slug);
   return { title: t("meta.videos"), description: t("meta.videosDesc") };
 }
 
@@ -18,7 +23,7 @@ export default async function VideosPage({
   const { slug } = await params;
   const tenant = await getSiteBySlug(slug);
   if (!tenant) notFound();
-  const { t } = await getPublicI18n();
+  const { t } = await getPublicI18n(slug);
 
   const videos = await getVideos(tenant.id, true);
 

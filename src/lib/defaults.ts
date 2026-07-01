@@ -15,6 +15,7 @@ export const defaultSiteSettings = {
   faviconUrl: "/favicon.ico",
   isPublished: true,
   maintenanceMode: false,
+  defaultLocale: "pt-BR",
 };
 
 export const defaultTheme = {

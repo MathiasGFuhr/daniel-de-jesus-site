@@ -4,6 +4,7 @@ import { TextInput } from "@/components/admin/TextInput";
 import { TextArea } from "@/components/admin/TextArea";
 import { ToggleSwitch } from "@/components/admin/ToggleSwitch";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { SelectInput } from "@/components/admin/SelectInput";
 import { updateSiteSettings } from "@/lib/actions/site";
 import { getSiteSettings } from "@/lib/data";
 import { getCurrentSite } from "@/lib/tenant";
@@ -60,6 +61,23 @@ export default async function AdminSitePage() {
               defaultChecked={s.maintenanceMode}
             />
           </div>
+        </AdminSection>
+
+        <AdminSection
+          title="Idioma da página pública"
+          description="Define o idioma padrão do site para visitantes. Eles também podem trocar pelo seletor PT / EN / ES no topo do site."
+        >
+          <SelectInput
+            label="Idioma padrão"
+            name="defaultLocale"
+            defaultValue={s.defaultLocale}
+            options={[
+              { value: "pt-BR", label: "Português (Brasil)" },
+              { value: "en", label: "English" },
+              { value: "es", label: "Español" },
+            ]}
+            hint="Menus, botões e textos do sistema mudam conforme o idioma escolhido."
+          />
         </AdminSection>
       </AdminForm>
     </>

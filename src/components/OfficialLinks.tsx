@@ -96,8 +96,14 @@ function displayHandle(
   }
 }
 
-export async function OfficialLinks({ links }: { links: OfficialLink[] }) {
-  const { t } = await getPublicI18n();
+export async function OfficialLinks({
+  links,
+  slug,
+}: {
+  links: OfficialLink[];
+  slug: string;
+}) {
+  const { t } = await getPublicI18n(slug);
   return (
     <div className="relative overflow-hidden rounded-[28px] border border-line/70 bg-gradient-to-br from-cream-50 via-cream-50 to-beige/25 p-5 sm:p-7 lg:p-8">
       <div
