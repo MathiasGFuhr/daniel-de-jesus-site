@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getCurrentSite } from "@/lib/tenant";
 import { bool, fail, isValidUrl, num, ok, str, type ActionState } from "./helpers";
+import { resolveSocialPlatform } from "@/lib/defaults";
 
 function revalidate(slug: string) {
   revalidatePath(`/${slug}`, "layout");
@@ -18,16 +19,19 @@ export async function saveSocialLink(
   const site = await getCurrentSite();
 
   const id = str(formData, "id");
-  const label = str(formData, "label");
+  const platform = str(formData, "platform");
+  const resolved = resolveSocialPlatform(platform);
   const url = str(formData, "url");
-  if (!label) return fail("O nome da plataforma é obrigatório.", { label: "Obrigatório" });
+  if (!resolved) {
+    return fail("Selecione uma plataforma.", { platform: "Obrigatório" });
+  }
   if (!isValidUrl(url)) return fail("Insira uma URL válida.", { url: "URL inválida" });
 
   const data = {
-    label,
+    label: resolved.label,
     handle: str(formData, "handle"),
     url,
-    icon: str(formData, "icon"),
+    icon: resolved.icon,
     isActive: bool(formData, "isActive"),
     order: num(formData, "order"),
   };
