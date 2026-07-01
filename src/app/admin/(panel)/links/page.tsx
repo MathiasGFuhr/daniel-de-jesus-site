@@ -1,24 +1,29 @@
+import Link from "next/link";
 import { PageHeading, AdminSection } from "@/components/admin/AdminSection";
 import { AdminForm } from "@/components/admin/AdminForm";
 import { TextInput } from "@/components/admin/TextInput";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { LinkButtonManager } from "@/components/admin/LinkButtonManager";
+import { SyncedSocialLinks } from "@/components/admin/SyncedSocialLinks";
 import { updateLinkPage } from "@/lib/actions/links";
-import { getLinkPage, getLinkButtons } from "@/lib/data";
+import { getLinkPage, getLinkButtons, getSocialLinks } from "@/lib/data";
+import { buildLinksPageItems } from "@/lib/links-page";
 import { getCurrentSite } from "@/lib/tenant";
 
 export default async function LinksAdminPage() {
   const site = await getCurrentSite();
-  const [page, buttons] = await Promise.all([
+  const [page, socials, buttons] = await Promise.all([
     getLinkPage(site.id),
+    getSocialLinks(site.id),
     getLinkButtons(site.id),
   ]);
+  const previewItems = buildLinksPageItems(socials, buttons, true);
 
   return (
     <>
       <PageHeading
         title="Central de links"
-        description="Configure a página /links usada na bio do Instagram e TikTok."
+        description="Página /links para bio do Instagram e TikTok. Redes sociais vêm de Redes sociais — aqui você só configura o cabeçalho e links extras."
       />
 
       <div className="space-y-8">
@@ -34,7 +39,23 @@ export default async function LinksAdminPage() {
           </AdminSection>
         </AdminForm>
 
-        <AdminSection title="Botões de link">
+        <AdminSection title="Redes sociais (sincronizado)">
+          <SyncedSocialLinks
+            items={socials.map((s) => ({
+              id: s.id,
+              label: s.label,
+              handle: s.handle,
+              url: s.url,
+              icon: s.icon,
+              isActive: s.isActive,
+            }))}
+          />
+        </AdminSection>
+
+        <AdminSection
+          title="Outros links"
+          description="Links extras como loja, contato ou parceiros. Não cadastre redes sociais aqui — use Redes sociais."
+        >
           <LinkButtonManager
             items={buttons.map((b) => ({
               id: b.id,
@@ -48,6 +69,15 @@ export default async function LinksAdminPage() {
             }))}
           />
         </AdminSection>
+
+        {previewItems.length > 0 && (
+          <p className="text-center text-xs text-slate-500">
+            Prévia: {previewItems.length} botão{previewItems.length === 1 ? "" : "ões"} na página pública ·{" "}
+            <Link href={`/${site.slug}/links`} target="_blank" className="font-medium text-slate-700 underline">
+              Abrir /{site.slug}/links
+            </Link>
+          </p>
+        )}
       </div>
     </>
   );

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getSiteBySlug, getLinkPage, getLinkButtons } from "@/lib/data";
+import { getSiteBySlug, getLinkPage, getLinkButtons, getSocialLinks } from "@/lib/data";
+import { buildLinksPageItems } from "@/lib/links-page";
 import { resolvePublicHref } from "@/lib/public-nav";
 import { ArrowUpRightIcon, DynamicIcon } from "@/components/Icons";
 
@@ -26,10 +27,12 @@ export default async function LinksPage({
   if (!tenant) notFound();
   const basePath = `/${tenant.slug}`;
 
-  const [page, buttons] = await Promise.all([
+  const [page, socials, buttons] = await Promise.all([
     getLinkPage(tenant.id),
+    getSocialLinks(tenant.id, true),
     getLinkButtons(tenant.id, true),
   ]);
+  const items = buildLinksPageItems(socials, buttons, true);
   const [first, rest] = splitName(page.title);
 
   return (
@@ -55,7 +58,7 @@ export default async function LinksPage({
       </div>
 
       <div className="mt-9 space-y-3">
-        {buttons.map((btn) => {
+        {items.map((btn) => {
           const internal = btn.url.startsWith("/");
           const href = resolvePublicHref(basePath, btn.url);
           return (

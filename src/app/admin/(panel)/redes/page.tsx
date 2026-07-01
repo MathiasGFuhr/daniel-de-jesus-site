@@ -10,7 +10,7 @@ export default async function RedesPage() {
     <>
       <PageHeading
         title="Redes sociais"
-        description="Gerencie os links sociais exibidos no site e na central de links."
+        description="Cadastre aqui uma vez — os links aparecem no site e na central de links (/links) automaticamente."
       />
       <SocialLinkManager
         items={items.map((i) => ({

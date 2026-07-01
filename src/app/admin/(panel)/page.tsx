@@ -12,6 +12,7 @@ import {
   getLinkButtons,
 } from "@/lib/data";
 import { getCurrentSite } from "@/lib/tenant";
+import { buildLinksPageItems } from "@/lib/links-page";
 
 const shortcuts = [
   { label: "Editar Home", href: "/admin/home" },
@@ -36,6 +37,7 @@ export default async function AdminOverview() {
       getLinkButtons(currentSite.id),
     ]);
   const publicHref = `/${currentSite.slug}`;
+  const linksPageCount = buildLinksPageItems(socials, buttons, true).length;
 
   const featuredSong = songs.find((s) => s.isFeatured) ?? songs[0];
   const featuredVideo = videos.find((v) => v.isFeatured) ?? videos[0];
@@ -144,7 +146,7 @@ export default async function AdminOverview() {
           Editar aparência
         </Link>
         <span className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm text-slate-400">
-          {buttons.length} botões na página de links
+          {linksPageCount} botões na página de links
         </span>
       </div>
     </>

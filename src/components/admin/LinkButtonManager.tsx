@@ -42,7 +42,9 @@ export function LinkButtonManager({ items }: { items: Item[] }) {
 
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
         {items.length === 0 ? (
-          <p className="py-8 text-center text-sm text-slate-400">Nenhum botão cadastrado.</p>
+          <p className="py-8 text-center text-sm text-slate-400">
+            Nenhum link extra. As redes sociais vêm de Redes sociais.
+          </p>
         ) : (
           <ul className="divide-y divide-slate-100">
             {items.map((item, i) => (

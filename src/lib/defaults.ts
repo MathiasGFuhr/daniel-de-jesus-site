@@ -282,11 +282,7 @@ export const defaultProducts = [
 ];
 
 export const defaultLinkButtons = [
-  { label: "Ouça no Spotify", subtitle: "Último lançamento", url: "https://spotify.com", icon: "spotify", isPrimary: true, order: 1 },
-  { label: "YouTube", subtitle: "Clipes oficiais", url: "https://youtube.com", icon: "youtube", isPrimary: false, order: 2 },
-  { label: "Instagram", subtitle: "@danieldejesus.oficial", url: "https://instagram.com", icon: "instagram", isPrimary: false, order: 3 },
-  { label: "TikTok", subtitle: "@danieldejesus.oficial", url: "https://tiktok.com", icon: "tiktok", isPrimary: false, order: 4 },
-  { label: "Loja", subtitle: "Produtos oficiais", url: "/loja", icon: "store", isPrimary: false, order: 5 },
+  { label: "Loja", subtitle: "Produtos oficiais", url: "/loja", icon: "store", isPrimary: false, order: 1 },
 ];
 
 export const ICON_OPTIONS = [
@@ -301,6 +297,29 @@ export const ICON_OPTIONS = [
   "music",
   "link",
 ] as const;
+
+/** Plataformas sociais: nome exibido + ícone vinculados automaticamente. */
+export const SOCIAL_PLATFORMS = [
+  { value: "instagram", label: "Instagram", icon: "instagram" },
+  { value: "tiktok", label: "TikTok", icon: "tiktok" },
+  { value: "youtube", label: "YouTube", icon: "youtube" },
+  { value: "spotify", label: "Spotify", icon: "spotify" },
+  { value: "apple", label: "Apple Music", icon: "apple" },
+  { value: "deezer", label: "Deezer", icon: "deezer" },
+  { value: "soundcloud", label: "SoundCloud", icon: "soundcloud" },
+] as const;
+
+export function resolveSocialPlatform(value: string) {
+  return SOCIAL_PLATFORMS.find((p) => p.value === value) ?? null;
+}
+
+export function guessSocialPlatform(icon: string, label?: string): string {
+  const byIcon = SOCIAL_PLATFORMS.find((p) => p.icon === icon);
+  if (byIcon) return byIcon.value;
+  const normalized = label?.trim().toLowerCase();
+  const byLabel = SOCIAL_PLATFORMS.find((p) => p.label.toLowerCase() === normalized);
+  return byLabel?.value ?? SOCIAL_PLATFORMS[0].value;
+}
 
 export const SONG_TYPES = ["Single", "EP", "Álbum", "Acústico", "Remix", "Live Session"] as const;
 export const VIDEO_TYPES = ["Clipe oficial", "Lyric video", "Bastidores", "Live session", "Visualizer", "Entrevista"] as const;
