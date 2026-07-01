@@ -4,9 +4,11 @@ import { logoutAction } from "@/lib/actions/auth";
 
 export function AdminHeader({
   userName,
+  siteSlug,
   onOpenMenu,
 }: {
   userName: string;
+  siteSlug: string;
   onOpenMenu: () => void;
 }) {
   return (
@@ -24,7 +26,7 @@ export function AdminHeader({
 
       <div className="ml-auto flex items-center gap-2 sm:gap-3">
         <a
-          href="/"
+          href={`/${siteSlug}`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"

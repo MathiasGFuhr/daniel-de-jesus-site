@@ -18,7 +18,11 @@ export default async function PanelLayout({
   const settings = await getSiteSettings(site.id);
 
   return (
-    <AdminLayout userName={session.name || session.email} siteName={settings.artistName}>
+    <AdminLayout
+      userName={session.name || session.email}
+      siteName={settings.artistName}
+      siteSlug={site.slug}
+    >
       {children}
     </AdminLayout>
   );

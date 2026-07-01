@@ -7,10 +7,12 @@ import { AdminHeader } from "./AdminHeader";
 export function AdminLayout({
   userName,
   siteName,
+  siteSlug,
   children,
 }: {
   userName: string;
   siteName: string;
+  siteSlug: string;
   children: ReactNode;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -40,7 +42,11 @@ export function AdminLayout({
       </div>
 
       <div className="lg:pl-64">
-        <AdminHeader userName={userName} onOpenMenu={() => setMenuOpen(true)} />
+        <AdminHeader
+          userName={userName}
+          siteSlug={siteSlug}
+          onOpenMenu={() => setMenuOpen(true)}
+        />
         <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">{children}</main>
       </div>
     </div>
