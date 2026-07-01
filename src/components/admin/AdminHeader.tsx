@@ -1,6 +1,7 @@
 "use client";
 
 import { logoutAction } from "@/lib/actions/auth";
+import { AdminThemeToggle } from "./AdminThemeToggle";
 
 export function AdminHeader({
   userName,
@@ -12,12 +13,12 @@ export function AdminHeader({
   onOpenMenu: () => void;
 }) {
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-slate-200 bg-white px-4 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-slate-200 bg-white px-4 sm:px-6 admin-dark:border-slate-800 admin-dark:bg-slate-900">
       <button
         type="button"
         onClick={onOpenMenu}
         aria-label="Abrir menu"
-        className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden"
+        className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden admin-dark:text-slate-300 admin-dark:hover:bg-slate-800"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
           <path d="M4 7h16M4 12h16M4 17h16" />
@@ -25,19 +26,20 @@ export function AdminHeader({
       </button>
 
       <div className="ml-auto flex items-center gap-2 sm:gap-3">
+        <AdminThemeToggle />
         <a
           href={`/${siteSlug}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 admin-dark:border-slate-600 admin-dark:text-slate-200 admin-dark:hover:bg-slate-800"
         >
           Visualizar site
         </a>
-        <span className="hidden text-sm text-slate-500 sm:inline">{userName}</span>
+        <span className="hidden text-sm text-slate-500 sm:inline admin-dark:text-slate-400">{userName}</span>
         <form action={logoutAction}>
           <button
             type="submit"
-            className="rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
+            className="rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 admin-dark:bg-slate-800 admin-dark:text-slate-200 admin-dark:hover:bg-slate-700"
           >
             Sair
           </button>

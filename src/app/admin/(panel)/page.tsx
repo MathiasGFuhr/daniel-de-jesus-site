@@ -65,7 +65,7 @@ export default async function AdminOverview() {
             href={publicHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800"
+            className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 admin-dark:bg-slate-100 admin-dark:text-slate-900 admin-dark:hover:bg-white"
           >
             Visualizar site público
           </a>
@@ -95,14 +95,14 @@ export default async function AdminOverview() {
           href="/admin/spotify"
         />
         <AdminCard>
-          <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
+          <span className="text-xs font-medium uppercase tracking-wide text-slate-500 admin-dark:text-slate-400">
             Cores atuais
           </span>
           <div className="mt-3 flex gap-1.5">
             {themeColors.map((c, i) => (
               <span
                 key={i}
-                className="h-7 w-7 rounded-md border border-slate-200"
+                className="h-7 w-7 rounded-md border border-slate-200 admin-dark:border-slate-600"
                 style={{ backgroundColor: c }}
                 title={c}
               />
@@ -110,7 +110,7 @@ export default async function AdminOverview() {
           </div>
           <Link
             href="/admin/aparencia"
-            className="mt-3 inline-block text-xs font-medium text-slate-600 hover:text-slate-900"
+            className="mt-3 inline-block text-xs font-medium text-slate-600 hover:text-slate-900 admin-dark:text-slate-400 admin-dark:hover:text-slate-200"
           >
             Editar aparência →
           </Link>
@@ -118,7 +118,7 @@ export default async function AdminOverview() {
       </div>
 
       <div className="mt-8">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500 admin-dark:text-slate-400">
           Atalhos rápidos
         </h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -126,26 +126,26 @@ export default async function AdminOverview() {
             <Link
               key={s.href}
               href={s.href}
-              className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50"
+              className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50 admin-dark:border-slate-700 admin-dark:bg-slate-900 admin-dark:text-slate-200 admin-dark:hover:border-slate-600 admin-dark:hover:bg-slate-800"
             >
               {s.label}
-              <span className="text-slate-400">→</span>
+              <span className="text-slate-400 admin-dark:text-slate-500">→</span>
             </Link>
           ))}
         </div>
       </div>
 
       <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Link href="/admin/home" className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-medium text-slate-700 hover:bg-slate-50">
+        <Link href="/admin/home" className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-medium text-slate-700 hover:bg-slate-50 admin-dark:border-slate-700 admin-dark:bg-slate-900 admin-dark:text-slate-200 admin-dark:hover:bg-slate-800">
           Editar home
         </Link>
-        <Link href="/admin/produtos" className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-medium text-slate-700 hover:bg-slate-50">
+        <Link href="/admin/produtos" className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-medium text-slate-700 hover:bg-slate-50 admin-dark:border-slate-700 admin-dark:bg-slate-900 admin-dark:text-slate-200 admin-dark:hover:bg-slate-800">
           Abrir loja
         </Link>
-        <Link href="/admin/aparencia" className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-medium text-slate-700 hover:bg-slate-50">
+        <Link href="/admin/aparencia" className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-medium text-slate-700 hover:bg-slate-50 admin-dark:border-slate-700 admin-dark:bg-slate-900 admin-dark:text-slate-200 admin-dark:hover:bg-slate-800">
           Editar aparência
         </Link>
-        <span className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm text-slate-400">
+        <span className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm text-slate-400 admin-dark:border-slate-700 admin-dark:bg-slate-900 admin-dark:text-slate-500">
           {linksPageCount} botões na página de links
         </span>
       </div>

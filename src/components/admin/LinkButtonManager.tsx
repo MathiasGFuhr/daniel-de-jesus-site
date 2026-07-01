@@ -35,33 +35,33 @@ export function LinkButtonManager({ items }: { items: Item[] }) {
     <div>
       <div className="mb-4 flex justify-end">
         <button type="button" onClick={() => { setEditing(null); setOpen(true); }}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 admin-dark:bg-slate-100 admin-dark:text-slate-900 admin-dark:hover:bg-white">
           + Adicionar botão
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white admin-dark:border-slate-700 admin-dark:bg-slate-900">
         {items.length === 0 ? (
-          <p className="py-8 text-center text-sm text-slate-400">
+          <p className="py-8 text-center text-sm text-slate-400 admin-dark:text-slate-500">
             Nenhum link extra. As redes sociais vêm de Redes sociais.
           </p>
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-slate-100 admin-dark:divide-slate-800">
             {items.map((item, i) => (
               <li key={item.id} className="flex items-center gap-3 px-4 py-3">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-slate-900">
+                  <p className="truncate text-sm font-medium text-slate-900 admin-dark:text-slate-100">
                     {item.label}{" "}
-                    {item.isPrimary && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] text-amber-700">Destaque</span>}
+                    {item.isPrimary && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] text-amber-700 admin-dark:bg-amber-950/40 admin-dark:text-amber-300">Destaque</span>}
                   </p>
-                  <p className="truncate text-xs text-slate-500">{item.url}</p>
+                  <p className="truncate text-xs text-slate-500 admin-dark:text-slate-400">{item.url}</p>
                 </div>
-                {!item.isActive && <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-400">Inativo</span>}
+                {!item.isActive && <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-400 admin-dark:bg-slate-800 admin-dark:text-slate-500">Inativo</span>}
                 <RowButton onClick={() => moveLinkButton(item.id, "up")} className={i === 0 ? "opacity-30" : ""}>↑</RowButton>
                 <RowButton onClick={() => moveLinkButton(item.id, "down")} className={i === items.length - 1 ? "opacity-30" : ""}>↓</RowButton>
                 <RowButton onClick={() => toggleLinkButton(item.id)}>{item.isActive ? "Desativar" : "Ativar"}</RowButton>
                 <button type="button" onClick={() => { setEditing(item); setOpen(true); }}
-                  className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50">
+                  className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 admin-dark:border-slate-600 admin-dark:text-slate-300 admin-dark:hover:bg-slate-800">
                   Editar
                 </button>
                 <DeleteButton onConfirm={() => deleteLinkButton(item.id)} title="Excluir botão?" />

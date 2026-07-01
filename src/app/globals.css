@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant admin-dark (&:where(.admin-panel.dark, .admin-panel.dark *));
+
 @theme {
   /* Paleta premium / editorial — controlada pelo painel via --site-* */
   --color-cream: var(--site-bg, #faf7f1);

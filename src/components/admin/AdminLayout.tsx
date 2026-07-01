@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { AdminSidebar } from "./AdminSidebar";
 import { AdminHeader } from "./AdminHeader";
+import { AdminThemeProvider, useAdminTheme } from "@/lib/admin-theme";
 
 export function AdminLayout({
   userName,
@@ -15,10 +16,35 @@ export function AdminLayout({
   siteSlug: string;
   children: ReactNode;
 }) {
+  return (
+    <AdminThemeProvider>
+      <AdminShell userName={userName} siteName={siteName} siteSlug={siteSlug}>
+        {children}
+      </AdminShell>
+    </AdminThemeProvider>
+  );
+}
+
+function AdminShell({
+  userName,
+  siteName,
+  siteSlug,
+  children,
+}: {
+  userName: string;
+  siteName: string;
+  siteSlug: string;
+  children: ReactNode;
+}) {
+  const { theme, mounted } = useAdminTheme();
   const [menuOpen, setMenuOpen] = useState(false);
+  const isDark = mounted && theme === "dark";
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div
+      className={`admin-panel min-h-screen bg-slate-50 admin-dark:bg-slate-950 ${isDark ? "dark" : ""}`}
+      suppressHydrationWarning
+    >
       {/* Sidebar desktop */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 bg-slate-900 lg:block">
         <AdminSidebar siteName={siteName} />

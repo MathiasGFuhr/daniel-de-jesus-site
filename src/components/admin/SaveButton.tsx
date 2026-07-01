@@ -14,7 +14,7 @@ export function SaveButton({
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800 disabled:opacity-60"
+      className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800 disabled:opacity-60 admin-dark:bg-slate-100 admin-dark:text-slate-900 admin-dark:hover:bg-white"
     >
       {pending && (
         <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />

@@ -55,30 +55,30 @@ export function SocialLinkManager({ items }: { items: Item[] }) {
         <button
           type="button"
           onClick={startNew}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 admin-dark:bg-slate-100 admin-dark:text-slate-900 admin-dark:hover:bg-white"
         >
           + Adicionar rede
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white admin-dark:border-slate-700 admin-dark:bg-slate-900">
         {items.length === 0 ? (
-          <p className="py-8 text-center text-sm text-slate-400">Nenhuma rede cadastrada.</p>
+          <p className="py-8 text-center text-sm text-slate-400 admin-dark:text-slate-500">Nenhuma rede cadastrada.</p>
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-slate-100 admin-dark:divide-slate-800">
             {items.map((item, i) => (
               <li key={item.id} className="flex items-center gap-3 px-4 py-3">
                 <span className="flex w-8 flex-col">
                   <RowButton onClick={() => moveSocialLink(item.id, "up")} title="Subir" className={i === 0 ? "opacity-30" : ""}>↑</RowButton>
                 </span>
-                <DynamicIcon name={item.icon} className="h-4 w-4 shrink-0 text-slate-500" />
+                <DynamicIcon name={item.icon} className="h-4 w-4 shrink-0 text-slate-500 admin-dark:text-slate-400" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-slate-900">{item.label}</p>
-                  <p className="truncate text-xs text-slate-500">{item.url}</p>
+                  <p className="truncate text-sm font-medium text-slate-900 admin-dark:text-slate-100">{item.label}</p>
+                  <p className="truncate text-xs text-slate-500 admin-dark:text-slate-400">{item.url}</p>
                 </div>
                 <span
                   className={`rounded-full px-2 py-0.5 text-[11px] ${
-                    item.isActive ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"
+                    item.isActive ? "bg-emerald-50 text-emerald-600 admin-dark:bg-emerald-950/40 admin-dark:text-emerald-400" : "bg-slate-100 text-slate-400 admin-dark:bg-slate-800 admin-dark:text-slate-500"
                   }`}
                 >
                   {item.isActive ? "Ativo" : "Inativo"}
@@ -88,7 +88,7 @@ export function SocialLinkManager({ items }: { items: Item[] }) {
                 <button
                   type="button"
                   onClick={() => startEdit(item)}
-                  className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+                  className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 admin-dark:border-slate-600 admin-dark:text-slate-300 admin-dark:hover:bg-slate-800"
                 >
                   Editar
                 </button>
